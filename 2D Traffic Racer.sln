@@ -1,0 +1,38 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "2D Traffic Racer", "2D Traffic Racer.csproj", "{1915C262-95B6-80C6-3288-BE1C23281A24}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "2D Traffic Racer.Plugins", "2D Traffic Racer.Plugins.csproj", "{4EC6410E-01E1-D79B-641B-9E782D6A3FE0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "2D Traffic Racer.Editor", "2D Traffic Racer.Editor.csproj", "{A4F14281-789A-71B4-20F3-C0E6F7B59364}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "2D Traffic Racer.Editor.Plugins", "2D Traffic Racer.Editor.Plugins.csproj", "{C387912D-A828-99C4-AF76-AD37C66315A1}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1915C262-95B6-80C6-3288-BE1C23281A24}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1915C262-95B6-80C6-3288-BE1C23281A24}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1915C262-95B6-80C6-3288-BE1C23281A24}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1915C262-95B6-80C6-3288-BE1C23281A24}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4EC6410E-01E1-D79B-641B-9E782D6A3FE0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4EC6410E-01E1-D79B-641B-9E782D6A3FE0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4EC6410E-01E1-D79B-641B-9E782D6A3FE0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4EC6410E-01E1-D79B-641B-9E782D6A3FE0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A4F14281-789A-71B4-20F3-C0E6F7B59364}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A4F14281-789A-71B4-20F3-C0E6F7B59364}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A4F14281-789A-71B4-20F3-C0E6F7B59364}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A4F14281-789A-71B4-20F3-C0E6F7B59364}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C387912D-A828-99C4-AF76-AD37C66315A1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C387912D-A828-99C4-AF76-AD37C66315A1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C387912D-A828-99C4-AF76-AD37C66315A1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C387912D-A828-99C4-AF76-AD37C66315A1}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
