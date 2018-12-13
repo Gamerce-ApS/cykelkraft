@@ -27,8 +27,13 @@ public class PlayerController : MonoBehaviour {
     [SerializeField] private int            maxSteerRotation;                                   //max rotation car can rotate
     [SerializeField] private SpriteRenderer spriteRenderer;                                     //ref to SpriteRenderer
     [SerializeField] private Sprite[]       sprites;                                            //ref to all car sprites
+	[SerializeField] private GameObject leftPadle;
+	[SerializeField] private GameObject rightPadle;
+	[SerializeField] private GameObject boosterPadles;
+	[SerializeField] private Animator animator;
 
-    private Vector3 currentPos, lastPos;                                            //ref to current position and last position if car
+
+	private Vector3 currentPos, lastPos;                                            //ref to current position and last position if car
     private float minMoveDistanceToRotate = 0.02f;                                  //minimum distance to be moved by car to rotate
     private float rotation;                                                         //store the rotation angle
     private int currentLane = 0;                                                    //store reference to current lane player car is on
@@ -278,7 +283,11 @@ public class PlayerController : MonoBehaviour {
                     GuiManager.Instance.PickUpPop("Turbo Boost Activated");                     //play popup of turboBoost is activated
                     other.gameObject.SetActive(false);                                          //deactivate gameobject
                     GuiManager.Instance.TurboSpawned = false;                                   //set to false
-                    break;
+					leftPadle.SetActive(false);
+					rightPadle.SetActive(false);
+					animator.Play("Boost", -1, 0);
+					boosterPadles.SetActive(true);
+					break;
                 default:
                     break;
             } 
@@ -294,7 +303,11 @@ public class PlayerController : MonoBehaviour {
             invinsible = false;
             smokeEffect.SetActive(true);
             turboFireEffect.SetActive(false);
-        }
+			leftPadle.SetActive(true);
+			rightPadle.SetActive(true);
+			animator.Play("Pedals", -1, 0);
+			boosterPadles.SetActive(false);
+		}
     }
 
 }

@@ -32,13 +32,13 @@ public class Spawner : MonoBehaviour {
 
     public void SpawnObjects()
     {                                                                               //if player car fuel is less than 3 and fuel is not spawned
-        if (GuiManager.Instance.CurrentFuel < 3 && GuiManager.Instance.FuelSpawned == false)
-        {
-            SpawnFuel();                                                            //spawn fuel
-            GuiManager.Instance.FuelSpawned = true;                                 //set fuel spawned to true
-        }
-        else
-        {
+        //if (GuiManager.Instance.CurrentFuel < 3 && GuiManager.Instance.FuelSpawned == false)
+        //{
+        //    //SpawnFuel();                                                            //spawn fuel
+        //    GuiManager.Instance.FuelSpawned = true;                                 //set fuel spawned to true
+        //}
+       // else
+        //{
             int r = Random.Range(0, 6);                                             //get random number between 0 to 5
             if (r == 3)                                                             //if r is 3
             {   
@@ -81,7 +81,7 @@ public class Spawner : MonoBehaviour {
             {
                 SpawnCar();                        //else spawn vehicle
             }
-        }
+        //}
     }
 
     void SpawnCar()

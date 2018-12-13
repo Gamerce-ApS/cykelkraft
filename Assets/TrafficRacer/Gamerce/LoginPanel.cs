@@ -61,7 +61,8 @@ public class LoginPanel : MonoBehaviour {
 	public RectTransform newsletterInfoBubble;
 
 	private void OnEnable()
-	{		
+	{
+		OpenGamercePanel();
 	}
 
 	public void OpenGamercePanel()
