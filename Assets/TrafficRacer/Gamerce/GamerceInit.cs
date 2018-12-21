@@ -6,6 +6,7 @@ using System;
 using Newtonsoft.Json;
 using System.Net;
 using System.Collections;
+using UnityEngine.Networking;
 
 public class GamerceInit : MonoBehaviour
 {
@@ -396,7 +397,7 @@ public class GamerceInit : MonoBehaviour
 		});
 	}
 
-	public void PressedLogin(string username, string pw, System.Action<bool> onLogedIn)
+	public void PressedLogin(string username, string pw, System.Action<bool> onLogedIn, bool aShouldSendPlayfabId = false)
 	{
 		//if (hasInternet == false)
 		//{
@@ -425,12 +426,74 @@ public class GamerceInit : MonoBehaviour
 			{
 				try
 				{
-					//Points points = JsonUtility.FromJson<Points>(result.FunctionResult.ToString());
-					PlayerPrefs.SetString("G_Username", username);
-					PlayerPrefs.SetString("G_Password", pw);
-					playerData = JsonConvert.DeserializeObject<PlayerData>(result.FunctionResult.ToString());
-					float points = playerData.GetPoints();
 					
+					playerData = JsonConvert.DeserializeObject<PlayerData>(result.FunctionResult.ToString());
+					StartCoroutine(LoginRoutine(isSuccess =>
+					{
+						if (isSuccess == true)
+						{
+							PlayerPrefs.SetString("G_Username", username);
+							PlayerPrefs.SetString("G_Password", pw);
+							if (onLogedIn != null)
+								onLogedIn(true);
+						}
+					}, username, pw, aShouldSendPlayfabId));
+
+
+				}
+				catch(Exception e)
+				{
+					if (onLogedIn != null)
+						onLogedIn(false);
+				}
+
+			}
+
+		}, error =>
+		{
+			onLogedIn(false);
+
+		});
+	}
+
+	IEnumerator LoginRoutine(Action<bool> onComplete, string aUsername, string aPassword, bool aShouldSendPlayfabId)
+	{
+		string url = "https://gamerce.net/gamerce_login/?username=" + aUsername + "&password=" + aPassword + "&points=" + playerData.GetPoints().ToString() + "&game=Cykelkraft";
+		if (playerData.GetAmountOfDiscounts() > 0)
+		{
+			url += "&discount_code=" + GetAllDiscountCodes() + "&discount_amount=" + GetAllDiscountPercent();
+		}
+		if (aShouldSendPlayfabId == true)
+		{
+			url += "&playfabId=" + playfabId;
+		}
+		Debug.Log(url);
+		UnityWebRequest www = UnityWebRequest.Get(url);
+		yield return www.SendWebRequest();
+
+
+		if (www.isNetworkError || www.isHttpError)
+		{
+			//MenuManager.Instance.CloseLoadingWindow();
+			//MenuManager.Instance.ShowErrorMessage("An error has occurred. Try again");
+			Debug.Log(www.error);
+		}
+		else
+		{
+			Debug.Log(www.downloadHandler.text);
+			if (www.downloadHandler.text == "error")
+			{
+
+			}
+			else
+			{
+				try
+				{
+					PlayerPrefs.SetString("G_Username", aUsername);
+					PlayerPrefs.SetString("G_Password", aPassword);
+					string data = www.downloadHandler.text.Substring(1);
+					playerData = JsonConvert.DeserializeObject<PlayerData>(data);
+					float points = playerData.GetPoints();
 					PlayerPrefs.SetFloat("PlayedForTime", points);
 					int discountsEarned = 0;
 					if (points >= ThreeStarPoints)
@@ -448,42 +511,33 @@ public class GamerceInit : MonoBehaviour
 						discountsEarned = 1;
 						PlayerPrefs.SetInt("DiscountWindowShowed", 1);
 					}
-					if (discountsEarned > 0 && playerData.GetAmountOfDiscounts() < discountsEarned)
-					{
-						AddDiscounts(username, pw);
-					}
 
-					//float pointsToSync = PlayerPrefs.GetFloat("PointsToSync", 0f);
-					//if (pointsToSync > 0)
-					//	SendTime(pointsToSync, (b) => 
-					//	{
-					//		PlayerPrefs.SetFloat("PointsToSync", 0f);
-					//	}, true);
+					Debug.Log(playerData.GetPoints());
+					ExecuteCloudScriptRequest request = new ExecuteCloudScriptRequest();
+					request.FunctionName = "UpdateTimePlayed";
+					request.FunctionParameter = new Dictionary<string, string> {
+						{ "points", points.ToString()}
 
-					if (onLogedIn != null)
-						onLogedIn(true);
+					};
+					request.GeneratePlayStreamEvent = true;
 
-					return;
+					PlayFabClientAPI.ExecuteCloudScript(request, result => {
+
+						if (onComplete != null)
+							onComplete(true);
+
+					}, error => { });
 				}
-				catch(Exception e)
+				catch (Exception e)
 				{
-					if (onLogedIn != null)
-						onLogedIn(false);
-					return;
+
 				}
-
 			}
-			if (onLogedIn != null)
-				onLogedIn(false);
 
-		}, error =>
-		{
-			onLogedIn(false);
-
-		});
+		}
 	}
 
-	public void Register(string aUsername, string aPassword, string aEmail, Action onSuccess = null, Action<RegisterResponse> onFail = null)
+	public void Register(string aUsername, string aPassword, string aEmail, Action<bool> onSuccess = null, Action<RegisterResponse> onFail = null)
 	{
 		//if (hasInternet == false)
 		//{
@@ -510,30 +564,15 @@ public class GamerceInit : MonoBehaviour
 		{
 			if (result.FunctionResult != null)
 			{
-				RegisterResponse response = JsonUtility.FromJson<RegisterResponse>(result.FunctionResult.ToString());
-				if (response.Points != -1)
-				{
-					if (onSuccess != null)
-					{
-						PlayerPrefs.SetString("G_Username", aUsername);
-						PlayerPrefs.SetString("G_Password", aPassword);
-						PlayerPrefs.SetFloat("PlayedForTime", response.Points);
-						if(onSuccess != null)
-							onSuccess();
-					}
-				}
-				else
-				{
-					if (onFail != null)
-						onFail(response);
-				}
+				ReturnValue returnValue = ReturnValue.CreateFromJSON(result.FunctionResult.ToString());
+				StartCoroutine(RegisterRoutine(aUsername, aPassword, aEmail, returnValue.totalTime, onSuccess, onFail));
 			}
-			else
-			{
-				if (onFail != null)
-					onFail(null);
-				//MenuManager.Instance.CloseLoadingWindow();
-			}
+			//else
+			//{
+			//	if (onFail != null)
+			//		onFail(null);
+			//	//MenuManager.Instance.CloseLoadingWindow();
+			//}
 
 
 		}, error =>
@@ -543,12 +582,80 @@ public class GamerceInit : MonoBehaviour
 		});
 	}
 
+	IEnumerator RegisterRoutine(string aUsername, string aPassword, string aEmail, float points, Action<bool> onSuccess = null, Action<RegisterResponse> onFail = null)
+	{
+		UnityWebRequest www = UnityWebRequest.Get("https://gamerce.net/gamerce_register/?username=" + aUsername + "&password=" + aPassword + "&email=" + aEmail + "&game=Cykelkraft&points=" + points + "&playfabId=" + playfabId);
+		yield return www.SendWebRequest();
+
+
+		if (www.isNetworkError || www.isHttpError)
+		{
+			//MenuManager.Instance.CloseLoadingWindow();
+			//MenuManager.Instance.ShowErrorMessage("An error has occurred. Try again");
+			Debug.Log(www.error);
+		}
+		else
+		{
+			try
+			{
+				//
+				//if(response.IsError() == true)
+				//{
+				//	Debug.Log("Error!");
+				//}
+				//else
+				//{
+				string responseString = www.downloadHandler.text;
+				string data = responseString.Substring(1);
+				if (responseString.StartsWith("1"))//Success
+				{
+					PlayerPrefs.SetString("G_Username", aUsername);
+					PlayerPrefs.SetString("G_Password", aPassword);
+					playerData = JsonConvert.DeserializeObject<PlayerData>(data);
+					var request = new ExecuteCloudScriptRequest();
+					request.FunctionName = "LoginAfterRegister";
+					request.FunctionParameter = new Dictionary<string, string> {
+						{ "username", aUsername},
+						{ "password", aPassword },
+						{ "points", playerData.GetPoints().ToString()}
+
+					};
+					request.GeneratePlayStreamEvent = true;
+
+					PlayFabClientAPI.ExecuteCloudScript(request, result =>
+					{
+						if (result.FunctionResult != null)
+						{
+							playerData = JsonConvert.DeserializeObject<PlayerData>(result.FunctionResult.ToString());
+							StartCoroutine(AddDiscountRoutine(onSuccess, 0f));
+						}
+					},
+					error =>
+					{
+
+					});
+				}
+				else if (responseString.StartsWith("2"))//error
+				{
+					RegisterResponse response = JsonConvert.DeserializeObject<RegisterResponse>(data);
+					if (onFail != null)
+						onFail(response);
+				}
+
+			}
+			catch (Exception e)
+			{
+
+			}
+		}
+	}
+
 	internal string GetLatestDiscountCodeAndPercent()
 	{
 		string discountCode = string.Empty;
-		if (playerData != null && playerData.games != null && playerData.games.CykelKraft != null)
+		if (playerData != null && playerData.games != null && playerData.games.Cykelkraft != null)
 		{
-			Dictionary<string, string> discounts = playerData.games.CykelKraft.discounts;
+			Dictionary<string, string> discounts = playerData.games.Cykelkraft.discounts;
 			if (discounts != null)
 			{
 				int highestPercent = -1;
@@ -575,7 +682,6 @@ public class GamerceInit : MonoBehaviour
 
 	public void PressedSignup()
 	{
-#if InAppBrowser
 		if (InAppBrowser.IsInAppBrowserOpened() == false)
 		{
 			InAppBrowser.DisplayOptions displayOptions = new InAppBrowser.DisplayOptions();
@@ -583,18 +689,17 @@ public class GamerceInit : MonoBehaviour
 			displayOptions.backButtonText = "Back";
 			displayOptions.pageTitle = "Gamerce Platform";
 			//GamerceSettings.instance.
-			InAppBrowser.OpenURL("https://gamerce.pbertilsson.se/user/?wpu_action=register", displayOptions);
+			InAppBrowser.OpenURL("https://gamerce.net/user/?wpu_action=register", displayOptions);
 		}
-#endif
 
 	}
 
 	internal string GetLatestDiscountCode()
 	{
 		string discountCode = string.Empty;
-		if (playerData != null && playerData.games != null && playerData.games.CykelKraft != null)
+		if (playerData != null && playerData.games != null && playerData.games.Cykelkraft != null)
 		{
-			Dictionary<string, string> discounts = playerData.games.CykelKraft.discounts;
+			Dictionary<string, string> discounts = playerData.games.Cykelkraft.discounts;
 			if (discounts != null)
 			{
 				int highestPercent = -1;
@@ -697,12 +802,38 @@ public class GamerceInit : MonoBehaviour
 		});
 	}
 
+	public string GetDiscountEmailFormat()
+	{
+		string discountCode = "";
+		if (playerData != null && playerData.games != null && playerData.games.Cykelkraft != null)
+		{
+			Dictionary<string, string> discounts = playerData.games.Cykelkraft.discounts;
+			int discountsAmount = 0;
+			if (discounts != null)
+			{
+				int count = 0;
+				foreach (KeyValuePair<string, string> discount in discounts)
+				{
+					if (count > 0)
+						discountCode += "<br>";
+					discountCode += discount.Value + "=" + discount.Key + "  ";
+					count++;
+				}
+				discountsAmount = discounts.Count;
+			}
+
+		}
+		Debug.Log(discountCode);
+
+		return discountCode;
+	}
+
 	public string GetDiscountHeader()
 	{
 		string discountCode = "";
-		if (playerData != null && playerData.games != null && playerData.games.CykelKraft != null)
+		if (playerData != null && playerData.games != null && playerData.games.Cykelkraft != null)
 		{	
-			Dictionary<string, string> discounts = playerData.games.CykelKraft.discounts;
+			Dictionary<string, string> discounts = playerData.games.Cykelkraft.discounts;
 			int discountsAmount = 0;
 			if (discounts != null)
 			{
@@ -725,9 +856,9 @@ public class GamerceInit : MonoBehaviour
 	public string GetLatestDiscountPercent()
 	{
 		string discountCode = "";
-		if (playerData != null && playerData.games != null && playerData.games.CykelKraft != null)
+		if (playerData != null && playerData.games != null && playerData.games.Cykelkraft != null)
 		{
-			Dictionary<string, string> discounts = playerData.games.CykelKraft.discounts;
+			Dictionary<string, string> discounts = playerData.games.Cykelkraft.discounts;
 			if (discounts != null)
 			{
 				int highestPercent = -1;
@@ -747,6 +878,52 @@ public class GamerceInit : MonoBehaviour
 				}
 			}
 		}
+		Debug.Log(discountCode);
+
+		return discountCode;
+	}
+
+	public string GetAllDiscountPercent()
+	{
+		string discountCode = string.Empty;
+		if (playerData != null && playerData.games != null && playerData.games.Cykelkraft != null)
+		{
+			Dictionary<string, string> discounts = playerData.games.Cykelkraft.discounts;
+			if (discounts != null)
+			{
+				foreach (KeyValuePair<string, string> discount in discounts)
+				{
+					string percent = discount.Value.Remove(discount.Value.IndexOf("%"));
+					int percentAmount = -1;
+
+					if (int.TryParse(percent, out percentAmount) == true)
+					{
+						discountCode += percentAmount.ToString() + ",";
+					}
+				}
+			}
+		}
+		discountCode = discountCode.Substring(0, discountCode.Length - 1);
+		Debug.Log(discountCode);
+
+		return discountCode;
+	}
+
+	public string GetAllDiscountCodes()
+	{
+		string discountCode = string.Empty;
+		if (playerData != null && playerData.games != null && playerData.games.Cykelkraft != null)
+		{
+			Dictionary<string, string> discounts = playerData.games.Cykelkraft.discounts;
+			if (discounts != null)
+			{
+				foreach (KeyValuePair<string, string> discount in discounts)
+				{
+					discountCode += discount.Key + ",";
+				}
+			}
+		}
+		discountCode = discountCode.Substring(0, discountCode.Length - 1);
 		Debug.Log(discountCode);
 
 		return discountCode;
@@ -820,9 +997,7 @@ public class GamerceInit : MonoBehaviour
 		if (sync)
 			para.Add("Sync", true);
 		request.FunctionParameter = para;
-		//request.FunctionParameter = TimePlayed/60f;
 		request.GeneratePlayStreamEvent = true;
-		// "{\"games\":{\"Rosemunde\":{\"points\":\"60\",\"discounts\":{\"xx03\":\"15%\",\"x1x1\":\"35%\",\"x01x\":\"55%\"}},\"VeraVega\":{\"discounts\":{\"x1x1\":\"15%\"}}}}\n\n"
 
 		PlayFabClientAPI.ExecuteCloudScript(request, result =>
 		{
@@ -835,21 +1010,13 @@ public class GamerceInit : MonoBehaviour
 				{
 					playerData = JsonConvert.DeserializeObject<PlayerData>(result.FunctionResult.ToString());
 					points = playerData.GetPoints();
+					StartCoroutine(AddDiscountRoutine(null, aTimePlayed));
+
 				}
 				catch (Exception e)
 				{
 					points = ReturnValue.CreateFromJSON(result.FunctionResult.ToString()).totalTime;
 				}
-
-				//if (GamerceInit.instance.IsLoggedIn())
-				//{
-				//	GamerceInit.instance.playerData = JsonConvert.DeserializeObject<PlayerData>(result.FunctionResult.ToString());
-				//	points = GamerceInit.instance.playerData.GetPoints();
-				//}
-				//else
-				//{
-				//	points = ReturnValue.CreateFromJSON(result.FunctionResult.ToString()).totalTime;
-				//}
 
 				PlayerPrefs.SetFloat("PlayedForTime", points);
 				Debug.Log("Data Sent Result:" + points);
@@ -874,6 +1041,49 @@ public class GamerceInit : MonoBehaviour
 
 
 		});
+	}
+
+	IEnumerator AddDiscountRoutine(Action<bool> onComplete, float aTimePlayed)
+	{
+		string username = PlayerPrefs.GetString("G_Username", "");
+		string password = PlayerPrefs.GetString("G_Password", "");
+
+
+		string url = "https://gamerce.net/gamerce_addgamediscount/?username=" + username + "&password=" + password + "&game=Cykelkraft&points=" + aTimePlayed/*playerData.GetPoints()*/;
+		if (playerData.GetAmountOfDiscounts() > 0)
+		{
+			url += "&discount_code=" + GetAllDiscountCodes() + "&discount_amount=" + GetAllDiscountPercent();
+		}
+
+		UnityWebRequest www = UnityWebRequest.Get(url);
+		yield return www.SendWebRequest();
+
+
+		if (www.isNetworkError || www.isHttpError)
+		{
+			//MenuManager.Instance.CloseLoadingWindow();
+			if (onComplete != null)
+				onComplete(false);
+			Debug.Log(www.error);
+		}
+		else
+		{
+			if (www.downloadHandler.text.StartsWith("1") == true)
+			{
+				string returnString = www.downloadHandler.text.Substring(1);
+				try
+				{
+					playerData = JsonConvert.DeserializeObject<PlayerData>(returnString);
+					PlayerPrefs.SetFloat("PlayedForTime", playerData.GetPoints());
+					if (onComplete != null)
+						onComplete(true);
+				}
+				catch (Exception e)
+				{
+
+				}
+			}
+		}
 	}
 
 	public bool CheckInternetAvailability()
@@ -960,20 +1170,20 @@ public class PlayerData
 [Serializable]
 public class GGame
 {
-	public CGameData CykelKraft;
+	public CGameData Cykelkraft;
 
 	public float GetPoints()
 	{
-		if(CykelKraft != null)
-			return CykelKraft.GetPoints();
+		if(Cykelkraft != null)
+			return Cykelkraft.GetPoints();
 		return 0f;
 	}
 
 	public int GetAmountOfDiscounts()
 	{
-		if (CykelKraft == null)
+		if (Cykelkraft == null)
 			return 0;
-		return CykelKraft.GetAmountOfDiscounts();
+		return Cykelkraft.GetAmountOfDiscounts();
 	}
 }
 

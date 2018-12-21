@@ -254,7 +254,9 @@ public class GameManager : MonoBehaviour
 [Serializable]
 public struct CarData
 {
-    public bool unlocked;
+	public Sprite bodyBoostSprite;
+	public Sprite bodySprite;
+	public bool unlocked;
     public int carLevel;
 }
 

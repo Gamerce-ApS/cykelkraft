@@ -10,6 +10,8 @@
 * NOTE:- This script controls game menu                                                                    *
 ***********************************************************************************************************/
 
+#define InAppBrowser
+
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -56,12 +58,14 @@ public class GuiManager : MonoBehaviour {
     [SerializeField] private ScrollTexture road;                                                //ref to ScrollTexture component on road gameobject
     [SerializeField] private float currentSpeed;                                                //speed of game
     [SerializeField] private Button noAdsbtn;                                                   //ref to remove ads button
-    #endregion
+	#endregion
 
-    /*---------------------------------------------------Private Variables------------------------------------------------------------*/
+	bool shouldOpenGamerceLogin;
 
-    #region Private Variables
-    private float currentFuel, maxEnemyCarGap = 4;                                              //floats to store values
+	/*---------------------------------------------------Private Variables------------------------------------------------------------*/
+
+	#region Private Variables
+	private float currentFuel, maxEnemyCarGap = 4;                                              //floats to store values
     private float currentMagnetTime, currentTurboTime, currentDoubleCoinTime;                   //floats to store values
     private float countDown = 4, distanceMultiplier, giftBarTime;                               //floats to store values
     private bool fuelSpawned = false, startCountDown, revived = false, giftBarActive = false;   //bools
@@ -105,7 +109,8 @@ public class GuiManager : MonoBehaviour {
 		}
 		else if(Instance != this)
 		{
-			Destroy(instance);
+			Destroy(gameObject);
+			return;
 		}
 
 		if (Instance == null)
@@ -113,14 +118,24 @@ public class GuiManager : MonoBehaviour {
             instance = this;
 			Init();
 		}
-
-
 	}
+
+
 
 	void Init()
 	{
 		DontDestroyOnLoad(gameObject);
+		SceneManager.sceneLoaded += SceneLoaded;
 		vars = Resources.Load<managerVars>("managerVarsContainer");         //loading data from managerVars
+	}
+
+	private void SceneLoaded(Scene arg0, LoadSceneMode arg1)
+	{
+		if (shouldOpenGamerceLogin)
+		{
+			MenuBtns("gamerce");
+			shouldOpenGamerceLogin = false;
+		}
 	}
 
 	private void Start()
@@ -472,6 +487,10 @@ public class GuiManager : MonoBehaviour {
 			MoveUI(mainMenuObj.GetComponent<RectTransform>(), new Vector2(0, 0), 0.5f, 0f, Ease.OutFlash);    //slide in mainMenu
 			//gamercePanel.SetActive(true);
 		}
+		else if(value == "closeDiscountWindow")
+		{
+			MoveUI(gameOverMenu.discountWindow.GetComponent<RectTransform>(), new Vector2(0, 2500), 0.5f, 0f, Ease.OutFlash);
+		}
     }
 
     #endregion
@@ -638,25 +657,67 @@ public class GuiManager : MonoBehaviour {
         }*/
 
 		GameOver();                                                                                 //call GameOver method
-		MoveUI(gameoverMenu.GetComponent<RectTransform>(), new Vector2(0, 0), 0.5f, 0.25f, Ease.OutFlash);  //slide in gameoverMenu
+		MoveUI(gameoverMenu.GetComponent<RectTransform>(), new Vector2(0, 0), 0.5f, 0.25f, Ease.OutFlash, ()=> 
+		{
+			ShouldShowDiscountWindow();
+
+			if (GamerceInit.instance.shouldShowDiscountWindow == true)
+			{
+				string rewardText = "You have unlocked a special reward!";
+				if (GamerceInit.instance.IsLoggedIn() == false)
+				{
+					rewardText += " Login to claim it!";
+				}
+				MoveUI(gameOverMenu.discountWindow.GetComponent<RectTransform>(), new Vector2(0, 0), 0.5f, 0, Ease.OutFlash);
+			}
+		});  //slide in gameoverMenu
 
 		SoundManager.instance.PlayFX("PanelSlide");                                                     //play slide in sound
     }
 
-    void GameOver()
+	void ShouldShowDiscountWindow()
+	{
+		//bool isLoggedInToPlayfab = GamerceInit.instance.IsLogedInToPlayfab;
+		bool haveInternet = GamerceInit.instance.CheckInternetAvailability();
+
+		int discountWindowShowed = PlayerPrefs.GetInt("DiscountWindowShowed", 0);
+		float points = PlayerPrefs.GetFloat("PlayedForTime");
+		if (discountWindowShowed == 2 && points >= GamerceInit.instance.ThreeStarPoints && haveInternet == true)
+		{
+			GamerceInit.instance.shouldShowDiscountWindow = true;
+			PlayerPrefs.SetInt("DiscountWindowShowed", 3);
+		}
+		else if (discountWindowShowed == 1 && points >= GamerceInit.instance.TwoStarPoints)
+		{
+			GamerceInit.instance.shouldShowDiscountWindow = true;
+			PlayerPrefs.SetInt("DiscountWindowShowed", 2);
+		}
+		else if (discountWindowShowed == 0 && points >= GamerceInit.instance.OneStarPoints)
+		{
+			PlayerPrefs.SetInt("DiscountWindowShowed", 1);
+			GamerceInit.instance.shouldShowDiscountWindow = true;
+		}
+
+		if (haveInternet == false /*|| isLoggedInToPlayfab == false*/)
+		{
+			GamerceInit.instance.shouldShowDiscountWindow = false;
+		}
+	}
+
+	void GameOver()
     {
-        //if (GameManager.instance.canShowAds == true)
-        //{
-        //    if (GameManager.instance.gamesPlayed >= vars.showInterstitialAfter)
-        //    {
-        //        GameManager.instance.gamesPlayed = 0;
-        //        UnityAds.instance.ShowAd();
-        //    }
+		//if (GameManager.instance.canShowAds == true)
+		//{
+		//    if (GameManager.instance.gamesPlayed >= vars.showInterstitialAfter)
+		//    {
+		//        GameManager.instance.gamesPlayed = 0;
+		//        UnityAds.instance.ShowAd();
+		//    }
 
-        //    GameManager.instance.gamesPlayed++;
-        //}
+		//    GameManager.instance.gamesPlayed++;
+		//}
 
-        gameOverMenu.coinText.text = "" + GameManager.Instance.coinAmount;                              //set gameOverMenu coinText
+		gameOverMenu.coinText.text = "" + GameManager.Instance.coinAmount;                              //set gameOverMenu coinText
         gameOverMenu.coinEarnedText.text = "+" + GameManager.Instance.currentCoinsEarned;               //set coinEarnedText
         gameOverMenu.scoreText.text = "" + Mathf.CeilToInt(GameManager.Instance.currentDistance);       //set scoreText
 
@@ -680,6 +741,50 @@ public class GuiManager : MonoBehaviour {
         gameOverMenu.hiScoreText.text = "" + GameManager.Instance.bestDistance;                         //set hiScoreText
 		GamerceInit.instance.EndTicker();
 
+	}
+
+	public void Claim()
+	{
+		bool isLoggedIn = GamerceInit.instance.IsLoggedIn();
+		if (isLoggedIn == true)
+		{
+#if UNITY_ANDROID
+			string latestDiscount = GamerceInit.instance.GetLatestDiscountPercent();
+			string url = "http://gamerce.net/gameunlocks/rosemunde/unlocked_discount.php?pro=" + latestDiscount;
+			Application.OpenURL(url);
+			MoveUI(gameOverMenu.discountWindow.GetComponent<RectTransform>(), new Vector2(0, 2500), 0.5f, 0f, Ease.OutFlash);
+			MoveUI(gameoverMenu.GetComponent<RectTransform>(), new Vector2(0, 2500), 0.5f, 0f, Ease.OutFlash);
+			MoveUI(gamercePanel.GetComponent<RectTransform>(), new Vector2(0, 0), 0.5f, 0f, Ease.OutFlash);
+#elif UNITY_IOS
+			if (InAppBrowser.IsInAppBrowserOpened() == false)
+			{
+				//GameAnalyticsManager.instance.ClickedClaimLoggedIn(latestDiscount);
+				string latestDiscount = GamerceInit.instance.GetLatestDiscountPercent();
+				string url = "http://gamerce.net/gameunlocks/rosemunde/unlocked_discount.php?pro=" + latestDiscount;
+				InAppBrowser.DisplayOptions displayOptions = new InAppBrowser.DisplayOptions();
+				displayOptions.displayURLAsPageTitle = false;
+				displayOptions.backButtonText = "Back";
+				displayOptions.pageTitle = "Gamerce";
+				InAppBrowser.OpenURL(url, displayOptions);
+
+				//MenuManager.Instance.OpenLogin();
+			}
+#endif
+
+		}
+		else
+		{
+			shouldOpenGamerceLogin = true;
+			SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+			MenuBtns("gamerce");
+			//MoveUI(gameOverMenu.discountWindow.GetComponent<RectTransform>(), new Vector2(0, 2500), 0.5f, 0f, Ease.OutFlash);
+			//MoveUI(gameoverMenu.GetComponent<RectTransform>(), new Vector2(0, 2500), 0.5f, 0f, Ease.OutFlash);
+			//MoveUI(gamercePanel.GetComponent<RectTransform>(), new Vector2(0, 0), 0.5f, 0f, Ease.OutFlash);
+			//GameAnalyticsManager.instance.ClickedClaimLoggedOut(latestDiscount);
+			//MenuManager.Instance.OpenLogin();
+		}
+
+		//MoveUI(gameOverMenu.discountWindow.GetComponent<RectTransform>(), new Vector2(0, 2500), 0.5f, 0f, Ease.OutFlash);
 	}
 
 	public void Revive()
@@ -709,11 +814,11 @@ public class GuiManager : MonoBehaviour {
         MoveUI(gameMenu.pickUpPopUI.GetComponent<RectTransform>(), new Vector3(500, 100, 0), 0.5f, 1f, Ease.OutExpo);   //slide out pickUpPopUI after 1s of delay
     }
 
-    #endregion
+#endregion
 
     /*--------------------------------------------------Tween Code-------------------------------------------------------------------*/
 
-    #region TweenCode
+#region TweenCode
 
     void MoveUI(RectTransform _transform, Vector2 position, float moveTime, float delayTime, Ease ease, bool aActiveState)
     {
@@ -725,16 +830,25 @@ public class GuiManager : MonoBehaviour {
 		});
     }
 
+	void MoveUI(RectTransform _transform, Vector2 position, float moveTime, float delayTime, Ease ease, System.Action onComplete)
+	{
+		_transform.DOAnchorPos(position, moveTime).SetDelay(delayTime).SetEase(ease).OnComplete(() =>
+		{
+			if (onComplete != null)
+				onComplete();
+		});
+	}
+
 	void MoveUI(RectTransform _transform, Vector2 position, float moveTime, float delayTime, Ease ease)
 	{
 		_transform.DOAnchorPos(position, moveTime).SetDelay(delayTime).SetEase(ease);
 	}
 
-	#endregion
+#endregion
 
 	/*--------------------------------------------------Struct-----------------------------------------------------------------------*/
 
-	#region Struct
+#region Struct
 	[System.Serializable]
     protected class GameMenu
     {
@@ -757,9 +871,9 @@ public class GuiManager : MonoBehaviour {
     protected class GameOverMenu
     {
         public Image soundBtnImg, giftBar;                                                              //ref to image objects
-        public Text coinText, scoreText, hiScoreText, coinEarnedText, giftInfoText;                     //ref to text
+        public Text coinText, scoreText, hiScoreText, coinEarnedText, giftInfoText, rewardText;         //ref to text
         public Button rewardAdsbtn, giftbtn, collectBtn;                                                //ref to buttons
-        public GameObject giftPanel, coinImg;                                                           //ref to gameobjects
+        public GameObject giftPanel, coinImg, discountWindow;                                                           //ref to gameobjects
     }
 
     [System.Serializable]
@@ -783,6 +897,6 @@ public class GuiManager : MonoBehaviour {
         public GameObject fbPanel, coinRewardPanel;
         public Image profileImage;
     }
-    #endregion
+#endregion
 
 }

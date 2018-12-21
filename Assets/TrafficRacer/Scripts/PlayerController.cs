@@ -33,6 +33,7 @@ public class PlayerController : MonoBehaviour {
 	[SerializeField] private Animator animator;
 
 
+
 	private Vector3 currentPos, lastPos;                                            //ref to current position and last position if car
     private float minMoveDistanceToRotate = 0.02f;                                  //minimum distance to be moved by car to rotate
     private float rotation;                                                         //store the rotation angle
@@ -285,6 +286,8 @@ public class PlayerController : MonoBehaviour {
                     GuiManager.Instance.TurboSpawned = false;                                   //set to false
 					leftPadle.SetActive(false);
 					rightPadle.SetActive(false);
+					if(GameManager.Instance.carDatas[GameManager.Instance.selectedCar].bodyBoostSprite != null)
+						spriteRenderer.sprite = GameManager.Instance.carDatas[GameManager.Instance.selectedCar].bodyBoostSprite;
 					animator.Play("Boost", -1, 0);
 					boosterPadles.SetActive(true);
 					break;
@@ -305,8 +308,11 @@ public class PlayerController : MonoBehaviour {
             turboFireEffect.SetActive(false);
 			leftPadle.SetActive(true);
 			rightPadle.SetActive(true);
+			if (GameManager.Instance.carDatas[GameManager.Instance.selectedCar].bodySprite != null)
+				spriteRenderer.sprite = GameManager.Instance.carDatas[GameManager.Instance.selectedCar].bodySprite;
 			animator.Play("Pedals", -1, 0);
 			boosterPadles.SetActive(false);
+
 		}
     }
 

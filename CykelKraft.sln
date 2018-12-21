@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2017
+# Visual Studio 15
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CykelKraft", "CykelKraft.csproj", "{851625AE-0E41-920A-45F7-4EAB692E0FDE}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CykelKraft.Editor", "CykelKraft.Editor.csproj", "{1030411E-6392-BB38-EF87-6C1D328BE8D9}"

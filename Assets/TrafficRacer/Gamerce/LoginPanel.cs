@@ -228,7 +228,7 @@ public class LoginPanel : MonoBehaviour {
 
 	}
 
-	void OnRegisterSuccess()
+	void OnRegisterSuccess(bool aSuccess)
 	{
 		GameAnalyticsManager.instance.RegisteredSuccessful();
 		isRegistering = true;
@@ -279,7 +279,6 @@ public class LoginPanel : MonoBehaviour {
 
 	public void UsePoints()
 	{
-#if InAppBrowser
 		if (InAppBrowser.IsInAppBrowserOpened() == false)
 		{
 			GameAnalyticsManager.instance.ClickedUsePoints();
@@ -289,13 +288,10 @@ public class LoginPanel : MonoBehaviour {
 				backButtonText = "Back",
 				pageTitle = "Gamerce Platform"
 			};
-			//GamerceSettings.instance.
-			//"https://gamerce.pbertilsson.se/gamerce_gotoprofile/?clusername=" + username + "&clpassword=" + password
-			string url = "https://gamerce.pbertilsson.se/gamerce_gotoprofile/?username=" + PlayerPrefs.GetString("G_Username") + "&password=" + PlayerPrefs.GetString("G_Password");
+			string url = "https://gamerce.net/gamerce_gotoprofile/?username=" + PlayerPrefs.GetString("G_Username") + "&password=" + PlayerPrefs.GetString("G_Password");
 			InAppBrowser.OpenURL(url, displayOptions);
 
 		}
-#endif
 	}
 
 
@@ -423,14 +419,13 @@ public class LoginPanel : MonoBehaviour {
 		string latestDiscountAmount = GamerceInit.instance.GetLatestDiscountPercent();
 		if (string.IsNullOrEmpty(latestDiscountAmount))
 			return;
-		string url = "http://pbertilsson.se/gamerce/gameunlocks/rosemunde/unlocked_discount.php?pro="+ latestDiscountAmount;
-#if InAppBrowser
+		string url = "http://gamerce.net/gameunlocks/rosemunde/unlocked_discount.php?pro="+ latestDiscountAmount;
+
 		InAppBrowser.DisplayOptions displayOptions = new InAppBrowser.DisplayOptions();
 		displayOptions.displayURLAsPageTitle = false;
 		displayOptions.backButtonText = "Back";
 		displayOptions.pageTitle = "Gamerce";
 		InAppBrowser.OpenURL(url, displayOptions);
-#endif
 	}
 
 	public void GoToRosemunde()
@@ -454,7 +449,7 @@ public class LoginPanel : MonoBehaviour {
 			latestDiscountAmount = "3";
 
 		string onlyCode = GamerceInit.instance.GetLatestDiscountCode();
-		string url = "https://pbertilsson.se/gamerce/gameunlocks/rosemunde/unlock_overview.php?pro="+latestDiscountAmount+"&code="+onlyCode;
+		string url = "https://gamerce.net/gameunlocks/rosemunde/unlock_overview.php?pro="+latestDiscountAmount+"&code="+onlyCode;
 #if InAppBrowser
 		InAppBrowser.DisplayOptions displayOptions = new InAppBrowser.DisplayOptions();
 		displayOptions.displayURLAsPageTitle = false;
