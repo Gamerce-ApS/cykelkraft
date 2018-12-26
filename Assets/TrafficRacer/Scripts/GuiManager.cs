@@ -28,7 +28,7 @@ public class GuiManager : MonoBehaviour {
 			{
 				instance = FindObjectOfType<GuiManager>();
 				instance.Init();
-				DontDestroyOnLoad(instance.gameObject);
+				//DontDestroyOnLoad(instance.gameObject);
 			}
 			return instance;
 		}
@@ -101,8 +101,12 @@ public class GuiManager : MonoBehaviour {
     [HideInInspector]
     public managerVars vars;
 
+	static int count = 0;
+
     void Awake ()
     {
+		count++;
+		gameObject.name += count.ToString();
 		if (Instance == this)
 		{
 			return;
@@ -120,11 +124,14 @@ public class GuiManager : MonoBehaviour {
 		}
 	}
 
-
+	private void OnDestroy()
+	{
+		Debug.Log(gameObject.name + " was destroyed!");
+	}
 
 	void Init()
 	{
-		DontDestroyOnLoad(gameObject);
+		//DontDestroyOnLoad(gameObject);
 		SceneManager.sceneLoaded += SceneLoaded;
 		vars = Resources.Load<managerVars>("managerVarsContainer");         //loading data from managerVars
 	}
@@ -190,7 +197,30 @@ public class GuiManager : MonoBehaviour {
         }
     }
 
-    void Update ()
+	public void ResetGameText()
+	{
+		GameManager.Instance.currentDistance = 0;
+		gameMenu.distanceText.text = "" + GameManager.Instance.currentDistance;
+		GameManager.Instance.currentCoinsEarned = 0;
+		gameMenu.coinText.text = "" + GameManager.Instance.currentCoinsEarned;
+		GameManager.Instance.gameStarted = false;
+		countDown = 4;
+	}
+
+	public void RemoveObjects()
+	{
+		Spawner.instance.RemoveObjects();
+		GameManager.Instance.gameOver = false;
+	}
+
+	public void SetPlayerVisible()
+	{
+		GameManager.Instance.playerCar.SetActive(true);
+		Vector3 playerPos = GameManager.Instance.playerCar.transform.position;
+		GameManager.Instance.playerCar.transform.position = new Vector3(0, playerPos.y, playerPos.z);
+	}
+
+	void Update ()
     {
 
 #if UNITY_ANDROID
@@ -290,8 +320,9 @@ public class GuiManager : MonoBehaviour {
     }
 
     void PlayMethod()
-    {      
-        currentFuel = GameManager.Instance.fuel;     
+    {
+		gameMenu.countDownText.gameObject.SetActive(true);                                              //activate countDownText
+		currentFuel = GameManager.Instance.fuel;     
         startCountDown = true;                                                                          //set startCountDown to true
 		GamerceInit.instance.StartTicker();
 	}
@@ -355,6 +386,9 @@ public class GuiManager : MonoBehaviour {
             PlayMethod();
         }
     }
+
+
+
 
     public void GDPRConsetBtn(int value)                                                                //called by GDPR Button
     {
@@ -717,6 +751,8 @@ public class GuiManager : MonoBehaviour {
 		//    GameManager.instance.gamesPlayed++;
 		//}
 
+		ResetGameText();
+
 		gameOverMenu.coinText.text = "" + GameManager.Instance.coinAmount;                              //set gameOverMenu coinText
         gameOverMenu.coinEarnedText.text = "+" + GameManager.Instance.currentCoinsEarned;               //set coinEarnedText
         gameOverMenu.scoreText.text = "" + Mathf.CeilToInt(GameManager.Instance.currentDistance);       //set scoreText
@@ -775,11 +811,14 @@ public class GuiManager : MonoBehaviour {
 		else
 		{
 			shouldOpenGamerceLogin = true;
-			SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-			MenuBtns("gamerce");
-			//MoveUI(gameOverMenu.discountWindow.GetComponent<RectTransform>(), new Vector2(0, 2500), 0.5f, 0f, Ease.OutFlash);
-			//MoveUI(gameoverMenu.GetComponent<RectTransform>(), new Vector2(0, 2500), 0.5f, 0f, Ease.OutFlash);
-			//MoveUI(gamercePanel.GetComponent<RectTransform>(), new Vector2(0, 0), 0.5f, 0f, Ease.OutFlash);
+			//SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+			//MenuBtns("gamerce");
+			RemoveObjects();
+			SetPlayerVisible();
+			gamercePanel.SetActive(true);
+			MoveUI(gameOverMenu.discountWindow.GetComponent<RectTransform>(), new Vector2(0, 2500), 0.5f, 0f, Ease.OutFlash);
+			MoveUI(gameoverMenu.GetComponent<RectTransform>(), new Vector2(0, 2500), 0.5f, 0f, Ease.OutFlash);
+			MoveUI(gamercePanel.GetComponent<RectTransform>(), new Vector2(0, 0), 0.5f, 0f, Ease.OutFlash);
 			//GameAnalyticsManager.instance.ClickedClaimLoggedOut(latestDiscount);
 			//MenuManager.Instance.OpenLogin();
 		}

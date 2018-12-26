@@ -23,11 +23,24 @@ public class Spawner : MonoBehaviour {
     private int lastSpawnIndex, randomPos;                                          //index reference of last spawn position
     private ObjectPooling objectPooling;                                            //ref to objectpooling
 
-    // Use this for initialization
-    void Start ()
+	private void Awake()
+	{
+		if(instance == null)
+		{
+			instance = this;
+			objectPooling = GetComponent<ObjectPooling>();                              //get the objectPooling script attached to this gameobject	
+			//DontDestroyOnLoad(gameObject);
+		}
+		if (instance != this)
+		{
+			Destroy(gameObject);
+		}
+	}
+
+	// Use this for initialization
+	void Start ()
     {
-        if (instance == null) instance = this;
-        objectPooling = GetComponent<ObjectPooling>();                              //get the objectPooling script attached to this gameobject	
+                                     //get the objectPooling script attached to this gameobject	
     }
 
     public void SpawnObjects()
@@ -168,19 +181,13 @@ public class Spawner : MonoBehaviour {
         lastSpawnIndex = randomPos;
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+	public void RemoveObjects()
+	{
+		foreach(Transform child in transform)
+		{
+			child.gameObject.SetActive(false);
+		}
+	}
 
     [System.Serializable]
     protected class DropPickUp
