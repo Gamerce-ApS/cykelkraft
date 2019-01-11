@@ -33,7 +33,7 @@ public class GameManager : MonoBehaviour
 
     private GameData data;
 
-    public bool gameStarted = false, gameOver = false, retry = false, tutorialShowned = false;
+    public bool gameStarted = false, gameOver = false, retry = false, tutorialShowned = false, paused = false;
     public bool fbConnected = false, loginReward, shareReward, likeReward;
     public int totalCars, totalCoins, gamesPlayed = 0, lastDistance, giftPoints;
     public float normalSpeed, turboSpeed, fuel, turboTime, magnetTime, doubleCoinTime;

@@ -75,6 +75,8 @@ public class GamerceInit : MonoBehaviour
 
 	public PlayFabTicker playfabTicker;
 
+	public bool ShouldShowGamerce;
+
 	private void Awake()
 	{
 		if (instance != null)
@@ -101,6 +103,7 @@ public class GamerceInit : MonoBehaviour
 		SceneToLoad = "";
 		discountPercents = new List<string>();
 		clothTextures = new Dictionary<string, Texture2D>();
+		ShouldShowGamerce = false;
 	}
 
 	public void Start()
@@ -493,6 +496,7 @@ public class GamerceInit : MonoBehaviour
 					PlayerPrefs.SetString("G_Password", aPassword);
 					string data = www.downloadHandler.text.Substring(1);
 					playerData = JsonConvert.DeserializeObject<PlayerData>(data);
+					PlayerPrefs.SetString("G_Email", playerData.email);
 					float points = playerData.GetPoints();
 					PlayerPrefs.SetFloat("PlayedForTime", points);
 					int discountsEarned = 0;
@@ -612,6 +616,7 @@ public class GamerceInit : MonoBehaviour
 					PlayerPrefs.SetString("G_Username", aUsername);
 					PlayerPrefs.SetString("G_Password", aPassword);
 					playerData = JsonConvert.DeserializeObject<PlayerData>(data);
+					PlayerPrefs.SetString("G_Email", playerData.email);
 					var request = new ExecuteCloudScriptRequest();
 					request.FunctionName = "LoginAfterRegister";
 					request.FunctionParameter = new Dictionary<string, string> {
@@ -743,6 +748,7 @@ public class GamerceInit : MonoBehaviour
 		{
 			PlayerPrefs.DeleteKey("G_Username");
 			PlayerPrefs.DeleteKey("G_Password");
+			PlayerPrefs.DeleteKey("G_Email");
 			PlayerPrefs.DeleteKey("HaveAcceptedGamerceNL");
 			PlayerPrefs.DeleteKey("HaveAcceptedBubbleroomNL");
 			PlayerPrefs.DeleteKey("DiscountWindowShowed");
@@ -762,15 +768,16 @@ public class GamerceInit : MonoBehaviour
 
 	}
 
-	public void AcceptNewsLetter(bool acceptGamerce, bool acceptBubbleroom, Action onSuccess, Action onFail)
+	public void AcceptNewsLetter(bool acceptGamerce, bool acceptCK, Action onSuccess, Action onFail)
 	{
+		StartCoroutine(SendNewsLetterCor(acceptGamerce, acceptCK, onSuccess, onFail));
 		//if (hasInternet == false)
 		//{
 		//	if (onFail != null)
 		//		onFail();
 		//	return;
 		//}
-		if (IsLogedInToPlayfab == false)
+		/*if (IsLogedInToPlayfab == false)
 		{
 			LoginToPlayfab();
 			return;
@@ -799,7 +806,25 @@ public class GamerceInit : MonoBehaviour
 		{
 			if (onFail != null)
 				onFail();
-		});
+		});*/
+	}
+
+	IEnumerator SendNewsLetterCor(bool acceptGamerce, bool acceptRosemunde, Action onSuccess, Action onFail)
+	{
+		if (acceptRosemunde)
+		{
+			UnityWebRequest www2 = UnityWebRequest.Get("https://gamerce.net/gamerce_newslettersignup/?email=" + PlayerPrefs.GetString("G_Email", "") + "&permission=CykelKraft&source=CykelKraft");
+			yield return www2.SendWebRequest();
+		}
+
+		if (acceptGamerce)
+		{
+			UnityWebRequest www3 = UnityWebRequest.Get("https://gamerce.net/gamerce_newslettersignup/?email=" + PlayerPrefs.GetString("G_Email", "") + "&permission=Gamerce&source=CykelKraft");
+			yield return www3.SendWebRequest();
+		}
+
+		if (onSuccess != null)
+			onSuccess();
 	}
 
 	public string GetDiscountEmailFormat()
@@ -1150,6 +1175,7 @@ public class Points
 [Serializable]
 public class PlayerData
 {
+	public string email;
 	public GGame games;
 
 	public float GetPoints()

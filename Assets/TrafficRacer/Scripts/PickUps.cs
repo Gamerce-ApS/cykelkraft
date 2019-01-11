@@ -38,7 +38,7 @@ public class PickUps : MonoBehaviour {
 	// Update is called once per frame
 	void Update ()
     {
-        if (GameManager.Instance.gameOver == true) return;                          //if gameover is true , then return
+        if (GameManager.Instance.gameOver == true || GameManager.Instance.paused == true) return;                          //if gameover is true , then return
 
         if (transform.position.y <= -deactivationDistance)                          //if y position is less than - deactivation distance
         {

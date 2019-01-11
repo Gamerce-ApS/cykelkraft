@@ -54,7 +54,7 @@ public class GuiManager : MonoBehaviour {
 
     [SerializeField] [Header("-----------------------")] private GameObject mainMenuObj;        //ref to mainMenu panel
                                                                                                 //ref to other Object
-    [SerializeField] private GameObject gameMenuObj, gameoverMenu, reviveMenu, carShopPanel, turboEffect, powerupShop, gdprAdmobPanel, gamercePanel;
+    [SerializeField] private GameObject gameMenuObj, gameoverMenu, reviveMenu, carShopPanel, turboEffect, powerupShop, gdprAdmobPanel, gamercePanel, pauseMenu;
     [SerializeField] private ScrollTexture road;                                                //ref to ScrollTexture component on road gameobject
     [SerializeField] private float currentSpeed;                                                //speed of game
     [SerializeField] private Button noAdsbtn;                                                   //ref to remove ads button
@@ -101,12 +101,8 @@ public class GuiManager : MonoBehaviour {
     [HideInInspector]
     public managerVars vars;
 
-	static int count = 0;
-
     void Awake ()
     {
-		count++;
-		gameObject.name += count.ToString();
 		if (Instance == this)
 		{
 			return;
@@ -124,26 +120,30 @@ public class GuiManager : MonoBehaviour {
 		}
 	}
 
-	private void OnDestroy()
-	{
-		Debug.Log(gameObject.name + " was destroyed!");
-	}
+	//private void OnDestroy()
+	//{
+	//	SceneManager.sceneLoaded -= SceneLoaded;
+	//}
 
 	void Init()
 	{
 		//DontDestroyOnLoad(gameObject);
-		SceneManager.sceneLoaded += SceneLoaded;
+		//SceneManager.sceneLoaded += SceneLoaded;
 		vars = Resources.Load<managerVars>("managerVarsContainer");         //loading data from managerVars
 	}
 
-	private void SceneLoaded(Scene arg0, LoadSceneMode arg1)
-	{
-		if (shouldOpenGamerceLogin)
-		{
-			MenuBtns("gamerce");
-			shouldOpenGamerceLogin = false;
-		}
-	}
+	//private void SceneLoaded(Scene arg0, LoadSceneMode arg1)
+	//{
+	//	if (GamerceInit.instance.ShouldShowGamerce)
+	//	{
+	//		MenuBtns("gamerce");
+	//		GamerceInit.instance.ShouldShowGamerce = false;
+	//	}
+	//	else
+	//	{
+	//		MoveUI(mainMenuObj.GetComponent<RectTransform>(), new Vector2(0, 0), 0.5f, 0f, Ease.OutFlash);
+	//	}
+	//}
 
 	private void Start()
     {
@@ -180,9 +180,18 @@ public class GuiManager : MonoBehaviour {
         GameManager.Instance.gameOver = false;                                                          //set gameOver to false
         GameManager.Instance.currentCoinsEarned = 0;                                                    //set currentCoinsEarned to 0
         gameMenu.coinText.text = "" + GameManager.Instance.currentCoinsEarned;                          //set the coinText to currentCoinsEarned
-        speedIncreaser.milestone = speedIncreaser.milestoneIncreaser;                                   //set milestone to milestoneIncreaser
-        MoveUI(mainMenuObj.GetComponent<RectTransform>(), new Vector2(0, 0), 0.5f, 0f, Ease.OutFlash);  //slide in mainMenu
-        SoundManager.instance.PlayFX("PanelSlide");                                                     //play PanelSlide sound
+        speedIncreaser.milestone = speedIncreaser.milestoneIncreaser;//set milestone to milestoneIncreaser
+		if (GamerceInit.instance.ShouldShowGamerce)
+		{
+			MenuBtns("gamerce");
+			GamerceInit.instance.ShouldShowGamerce = false;
+		}
+		else
+		{
+			MoveUI(mainMenuObj.GetComponent<RectTransform>(), new Vector2(0, 0), 0.5f, 0f, Ease.OutFlash);
+		}
+		 //MoveUI(mainMenuObj.GetComponent<RectTransform>(), new Vector2(0, 0), 0.5f, 0f, Ease.OutFlash);  //slide in mainMenu
+		SoundManager.instance.PlayFX("PanelSlide");                                                     //play PanelSlide sound
         GameManager.Instance.playerCar = GameObject.FindGameObjectWithTag("Player");                    //get reference to player car
         GameManager.Instance.currentDistance = 0;                                                       //set currentDistance to 0
         gameMenu.distanceText.text = "" + GameManager.Instance.currentDistance;                         //set the distance text
@@ -197,38 +206,15 @@ public class GuiManager : MonoBehaviour {
         }
     }
 
-	public void ResetGameText()
-	{
-		GameManager.Instance.currentDistance = 0;
-		gameMenu.distanceText.text = "" + GameManager.Instance.currentDistance;
-		GameManager.Instance.currentCoinsEarned = 0;
-		gameMenu.coinText.text = "" + GameManager.Instance.currentCoinsEarned;
-		GameManager.Instance.gameStarted = false;
-		countDown = 4;
-	}
-
-	public void RemoveObjects()
-	{
-		Spawner.instance.RemoveObjects();
-		GameManager.Instance.gameOver = false;
-	}
-
-	public void SetPlayerVisible()
-	{
-		GameManager.Instance.playerCar.SetActive(true);
-		Vector3 playerPos = GameManager.Instance.playerCar.transform.position;
-		GameManager.Instance.playerCar.transform.position = new Vector3(0, playerPos.y, playerPos.z);
-	}
-
-	void Update ()
+    void Update ()
     {
 
 #if UNITY_ANDROID
         if (Input.GetKeyDown(KeyCode.Escape))                                                           //if escape key is press
             Application.Quit();                                                                         //quit game
 #endif
-        //if countDown is more then 0 , startCountDown is true and gameStarted is false
-        if (countDown > 0 && startCountDown == true && GameManager.Instance.gameStarted == false)
+		//if countDown is more then 0 , startCountDown is true and gameStarted is false
+		if (countDown > 0 && startCountDown == true && GameManager.Instance.gameStarted == false && GameManager.Instance.paused == false)
         {
             countDown -= Time.deltaTime;                                                                //reduce countDown by Time.deltaTime
             if (countDown <= 4 && countDown > 3)                                                        //if countdown is 4
@@ -275,7 +261,7 @@ public class GuiManager : MonoBehaviour {
             GiftBar();                                                                                  //call giftBar method
         }
 
-        if (GameManager.Instance.gameStarted == true && GameManager.Instance.gameOver == false)         //if gameOver is false and gameStarted is true
+        if (GameManager.Instance.gameStarted == true && GameManager.Instance.gameOver == false && GameManager.Instance.paused == false)         //if gameOver is false and gameStarted is true
         {
             GameManager.Instance.currentDistance += Time.deltaTime * distanceMultiplier;                //increase distance
             gameMenu.distanceText.text = "" + Mathf.RoundToInt(GameManager.Instance.currentDistance);   //set distance text
@@ -293,11 +279,15 @@ public class GuiManager : MonoBehaviour {
             //}
 
             gameMenu.fuelSlider.value = currentFuel / GameManager.Instance.fuel;                        //set fuelSlider value
-            IncreaseSpeed();                                                                            
 
-            if (magnetActive) MagnetBar();                                                              //if magnet is active call MagnetBar method
-            if (turboActive)    TurboBar();                                                             //if turbo is active call TurboBar method
-            if (doubleCoinActive) DoubleCoinBar();                                                      //if doubleCoin is active call DoubleCoinBar method
+			
+			IncreaseSpeed();
+
+			if (magnetActive) MagnetBar();                                                              //if magnet is active call MagnetBar method
+			if (turboActive) TurboBar();                                                             //if turbo is active call TurboBar method
+			if (doubleCoinActive) DoubleCoinBar();													 //if doubleCoin is active call DoubleCoinBar method
+
+                                                  
         }
 	}
 
@@ -320,9 +310,8 @@ public class GuiManager : MonoBehaviour {
     }
 
     void PlayMethod()
-    {
-		gameMenu.countDownText.gameObject.SetActive(true);                                              //activate countDownText
-		currentFuel = GameManager.Instance.fuel;     
+    {      
+        currentFuel = GameManager.Instance.fuel;     
         startCountDown = true;                                                                          //set startCountDown to true
 		GamerceInit.instance.StartTicker();
 	}
@@ -386,9 +375,6 @@ public class GuiManager : MonoBehaviour {
             PlayMethod();
         }
     }
-
-
-
 
     public void GDPRConsetBtn(int value)                                                                //called by GDPR Button
     {
@@ -525,7 +511,25 @@ public class GuiManager : MonoBehaviour {
 		{
 			MoveUI(gameOverMenu.discountWindow.GetComponent<RectTransform>(), new Vector2(0, 2500), 0.5f, 0f, Ease.OutFlash);
 		}
-    }
+		else if (value == "pause")
+		{
+			PlayerController.instance.PauseAnimation();
+			GameManager.Instance.paused = true;
+			MoveUI(pauseMenu.GetComponent<RectTransform>(), new Vector2(0, 0), 0.5f, 0f, Ease.OutFlash);
+		}
+		else if (value == "resumeGame")
+		{
+			MoveUI(pauseMenu.GetComponent<RectTransform>(), new Vector2(0, 2500), 0.5f, 0f, Ease.OutFlash, ()=> 
+			{
+				GameManager.Instance.paused = false;
+				PlayerController.instance.ResumeAnimation();
+			});
+		}
+		else if (value == "quitgame")
+		{
+			SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+		}
+	}
 
     #endregion
 
@@ -702,6 +706,7 @@ public class GuiManager : MonoBehaviour {
 				{
 					rewardText += " Login to claim it!";
 				}
+				gameOverMenu.discountWindow.SetActive(true);
 				MoveUI(gameOverMenu.discountWindow.GetComponent<RectTransform>(), new Vector2(0, 0), 0.5f, 0, Ease.OutFlash);
 			}
 		});  //slide in gameoverMenu
@@ -751,8 +756,6 @@ public class GuiManager : MonoBehaviour {
 		//    GameManager.instance.gamesPlayed++;
 		//}
 
-		ResetGameText();
-
 		gameOverMenu.coinText.text = "" + GameManager.Instance.coinAmount;                              //set gameOverMenu coinText
         gameOverMenu.coinEarnedText.text = "+" + GameManager.Instance.currentCoinsEarned;               //set coinEarnedText
         gameOverMenu.scoreText.text = "" + Mathf.CeilToInt(GameManager.Instance.currentDistance);       //set scoreText
@@ -786,7 +789,7 @@ public class GuiManager : MonoBehaviour {
 		{
 #if UNITY_ANDROID
 			string latestDiscount = GamerceInit.instance.GetLatestDiscountPercent();
-			string url = "http://gamerce.net/gameunlocks/rosemunde/unlocked_discount.php?pro=" + latestDiscount;
+			string url = "http://gamerce.net/gameunlocks/cykelkraft/unlocked_discount.php?pro=" + latestDiscount;
 			Application.OpenURL(url);
 			MoveUI(gameOverMenu.discountWindow.GetComponent<RectTransform>(), new Vector2(0, 2500), 0.5f, 0f, Ease.OutFlash);
 			MoveUI(gameoverMenu.GetComponent<RectTransform>(), new Vector2(0, 2500), 0.5f, 0f, Ease.OutFlash);
@@ -796,7 +799,7 @@ public class GuiManager : MonoBehaviour {
 			{
 				//GameAnalyticsManager.instance.ClickedClaimLoggedIn(latestDiscount);
 				string latestDiscount = GamerceInit.instance.GetLatestDiscountPercent();
-				string url = "http://gamerce.net/gameunlocks/rosemunde/unlocked_discount.php?pro=" + latestDiscount;
+				string url = "http://gamerce.net/gameunlocks/cykelkraft/unlocked_discount.php?pro=" + latestDiscount;
 				InAppBrowser.DisplayOptions displayOptions = new InAppBrowser.DisplayOptions();
 				displayOptions.displayURLAsPageTitle = false;
 				displayOptions.backButtonText = "Back";
@@ -810,15 +813,12 @@ public class GuiManager : MonoBehaviour {
 		}
 		else
 		{
-			shouldOpenGamerceLogin = true;
-			//SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-			//MenuBtns("gamerce");
-			RemoveObjects();
-			SetPlayerVisible();
-			gamercePanel.SetActive(true);
-			MoveUI(gameOverMenu.discountWindow.GetComponent<RectTransform>(), new Vector2(0, 2500), 0.5f, 0f, Ease.OutFlash);
-			MoveUI(gameoverMenu.GetComponent<RectTransform>(), new Vector2(0, 2500), 0.5f, 0f, Ease.OutFlash);
-			MoveUI(gamercePanel.GetComponent<RectTransform>(), new Vector2(0, 0), 0.5f, 0f, Ease.OutFlash);
+			GamerceInit.instance.ShouldShowGamerce = true;
+			SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+			MenuBtns("gamerce");
+			//MoveUI(gameOverMenu.discountWindow.GetComponent<RectTransform>(), new Vector2(0, 2500), 0.5f, 0f, Ease.OutFlash);
+			//MoveUI(gameoverMenu.GetComponent<RectTransform>(), new Vector2(0, 2500), 0.5f, 0f, Ease.OutFlash);
+			//MoveUI(gamercePanel.GetComponent<RectTransform>(), new Vector2(0, 0), 0.5f, 0f, Ease.OutFlash);
 			//GameAnalyticsManager.instance.ClickedClaimLoggedOut(latestDiscount);
 			//MenuManager.Instance.OpenLogin();
 		}

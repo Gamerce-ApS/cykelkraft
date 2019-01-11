@@ -57,7 +57,7 @@ public class PlayerController : MonoBehaviour {
 	void Update ()
     {                                                                               //if gameover is true or game started is false , return
 
-        if (GameManager.Instance.gameOver == true || GameManager.Instance.gameStarted == false) return;
+        if (GameManager.Instance.gameOver == true || GameManager.Instance.gameStarted == false || GameManager.Instance.paused == true) return;
 
         if (Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject())  //if mouse button is cliked is no UI is clicked
             GetMouseInput();                                                        // call GetMouseInput method
@@ -315,5 +315,15 @@ public class PlayerController : MonoBehaviour {
 
 		}
     }
+
+	public void PauseAnimation()
+	{
+		animator.speed = 0f;
+	}
+
+	public void ResumeAnimation()
+	{
+		animator.speed = 1f;
+	}
 
 }

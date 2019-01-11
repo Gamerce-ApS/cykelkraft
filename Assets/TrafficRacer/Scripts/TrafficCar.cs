@@ -35,7 +35,7 @@ public class TrafficCar : MonoBehaviour {
 	// Update is called once per frame
 	void Update ()
     {
-        if (GameManager.Instance.gameOver == true) return;
+        if (GameManager.Instance.gameOver == true || GameManager.Instance.paused == true) return;
 
         if (transform.position.y <= -deactivationDistance)
         {

@@ -168,31 +168,6 @@ public class CarShop : MonoBehaviour {
         }
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     [System.Serializable]
     protected struct CarShopUI
     {

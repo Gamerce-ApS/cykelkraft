@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Networking;
 using UnityEngine.UI;
 
 public class LoginPanel : MonoBehaviour {
@@ -289,7 +290,7 @@ public class LoginPanel : MonoBehaviour {
 				pageTitle = "Gamerce Platform"
 			};
 			string url = "https://gamerce.net/gamerce_gotoprofile/?username=" + PlayerPrefs.GetString("G_Username") + "&password=" + PlayerPrefs.GetString("G_Password");
-			InAppBrowser.OpenURL(url, displayOptions);
+			Application.OpenURL(url);
 
 		}
 	}
@@ -449,14 +450,9 @@ public class LoginPanel : MonoBehaviour {
 			latestDiscountAmount = "3";
 
 		string onlyCode = GamerceInit.instance.GetLatestDiscountCode();
-		string url = "https://gamerce.net/gameunlocks/rosemunde/unlock_overview.php?pro="+latestDiscountAmount+"&code="+onlyCode;
-#if InAppBrowser
-		InAppBrowser.DisplayOptions displayOptions = new InAppBrowser.DisplayOptions();
-		displayOptions.displayURLAsPageTitle = false;
-		displayOptions.backButtonText = "Back";
-		displayOptions.pageTitle = discountCode;
-		InAppBrowser.OpenURL(url, displayOptions);
-#endif
+		string url = "https://gamerce.net/gameunlocks/cykelkraft/unlock_overview.php?pro="+latestDiscountAmount+"&code="+onlyCode;
+
+		Application.OpenURL(url);
 	}
 
 	public void ClickedGamerceInfo()
@@ -515,5 +511,56 @@ public class LoginPanel : MonoBehaviour {
 	public void CloseLoading()
 	{
 		loadingText.transform.parent.gameObject.SetActive(false);
+	}
+
+	public void SendEmail()
+	{
+		if (GamerceInit.instance.IsLoggedIn() == true)
+		{
+			ShowLoading("Sending email");
+			StartCoroutine(SendEmailRoutine());
+		}
+	}
+
+	public IEnumerator SendEmailRoutine()
+	{
+		UnityWebRequest www = UnityWebRequest.Get("https://gamerce.net/gamerce_senddiscountmail/?username=" + PlayerPrefs.GetString("G_Username", "") + "&password=" + PlayerPrefs.GetString("G_Password", "") + "&game=Cykelkraft");
+		yield return www.SendWebRequest();
+
+
+		if (www.isNetworkError || www.isHttpError)
+		{
+			CloseLoading();
+			//MenuManager.Instance.ShowErrorMessage("An error has occurred. Try again");
+			Debug.Log(www.error);
+		}
+		else
+		{
+			CloseLoading();
+			if (string.IsNullOrEmpty(www.downloadHandler.text) == false)
+			{
+				if (www.downloadHandler.text == "-21" || www.downloadHandler.text == "-20")
+				{
+					//MenuManager.Instance.ShowErrorMessage("You have to unlock at least one discount before we can send an email.");
+				}
+				else if (www.downloadHandler.text == "1")
+				{
+					OpenMailSentWindow();
+				}
+				else
+				{
+					//MenuManager.Instance.ShowErrorMessage("An error has occurred. Try again");
+				}
+			}
+			else
+			{
+				//MenuManager.Instance.ShowErrorMessage("An error has occurred. Try again");
+			}
+		}
+	}
+
+	private void OpenMailSentWindow()
+	{
+		//throw new NotImplementedException();
 	}
 }

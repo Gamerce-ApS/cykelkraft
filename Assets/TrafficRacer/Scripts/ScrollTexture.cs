@@ -30,7 +30,7 @@ public class ScrollTexture : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (GameManager.Instance.gameOver == true) return;
+        if (GameManager.Instance.gameOver == true || GameManager.Instance.paused == true) return;
         foreach (Renderer renderer in renderers)            //loop through all the textures in the renderers array
         {
             renderer.material.mainTextureOffset += new Vector2(0, Time.deltaTime * scrollSpeed);    //apply the speed

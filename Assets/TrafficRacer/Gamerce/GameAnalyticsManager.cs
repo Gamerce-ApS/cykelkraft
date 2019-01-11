@@ -166,6 +166,6 @@ public class GameAnalyticsManager : MonoBehaviour {
 
 	internal void ClickedGoShop()
 	{
-		throw new NotImplementedException();
+		
 	}
 }
