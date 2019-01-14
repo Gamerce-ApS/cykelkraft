@@ -100,7 +100,6 @@ public class Spawner : MonoBehaviour {
     void SpawnCar()
     {
         int r = Random.Range(0, objectPooling.carsToPool.Length); //select random number between zero and carsToPool array length
-		Debug.Log("r: " + r);
 		car = objectPooling.GetCarPooledObject(objectPooling.carsToPool[r].name);           //get the car from objectPooling
 
         RandomPos();

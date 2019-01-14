@@ -63,7 +63,7 @@ public class PlayFabTicker : MonoBehaviour {
 
 	public void SendData(System.Action<bool> onComplete = null)
 	{
-		TimePlayed = TimePlayed / 60f;
+		//TimePlayed = TimePlayed / 60f;
 		//FIX THIS!!!
 		//GameAnalyticsManager.instance.TimeSpentInGame(PlayerPrefs.GetInt("OpenLevel", 0), (int)TimePlayed);
 		if (GamerceInit.instance.IsLogedInToPlayfab == false || GamerceInit.instance.CheckInternetAvailability() == false)

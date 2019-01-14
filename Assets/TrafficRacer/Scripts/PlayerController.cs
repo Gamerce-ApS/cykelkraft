@@ -27,11 +27,12 @@ public class PlayerController : MonoBehaviour {
     [SerializeField] private int            maxSteerRotation;                                   //max rotation car can rotate
     [SerializeField] private SpriteRenderer spriteRenderer;                                     //ref to SpriteRenderer
     [SerializeField] private Sprite[]       sprites;                                            //ref to all car sprites
+	[SerializeField] private Sprite[] boosterSprites;                                            //ref to all car sprites
+
 	[SerializeField] private GameObject leftPadle;
 	[SerializeField] private GameObject rightPadle;
 	[SerializeField] private GameObject boosterPadles;
 	[SerializeField] private Animator animator;
-
 
 
 	private Vector3 currentPos, lastPos;                                            //ref to current position and last position if car
@@ -286,8 +287,8 @@ public class PlayerController : MonoBehaviour {
                     GuiManager.Instance.TurboSpawned = false;                                   //set to false
 					leftPadle.SetActive(false);
 					rightPadle.SetActive(false);
-					if(GameManager.Instance.carDatas[GameManager.Instance.selectedCar].bodyBoostSprite != null)
-						spriteRenderer.sprite = GameManager.Instance.carDatas[GameManager.Instance.selectedCar].bodyBoostSprite;
+					if(boosterSprites[GameManager.Instance.selectedCar] != null)
+						spriteRenderer.sprite = boosterSprites[GameManager.Instance.selectedCar];
 					animator.Play("Boost", -1, 0);
 					boosterPadles.SetActive(true);
 					break;
@@ -308,8 +309,8 @@ public class PlayerController : MonoBehaviour {
             turboFireEffect.SetActive(false);
 			leftPadle.SetActive(true);
 			rightPadle.SetActive(true);
-			if (GameManager.Instance.carDatas[GameManager.Instance.selectedCar].bodySprite != null)
-				spriteRenderer.sprite = GameManager.Instance.carDatas[GameManager.Instance.selectedCar].bodySprite;
+			if (sprites[GameManager.Instance.selectedCar] != null)
+				spriteRenderer.sprite = sprites[GameManager.Instance.selectedCar];
 			animator.Play("Pedals", -1, 0);
 			boosterPadles.SetActive(false);
 

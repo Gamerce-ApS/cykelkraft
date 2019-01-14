@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.UI;
+using UnityEngine.UI.Extensions;
 
 public class LoginPanel : MonoBehaviour {
 
@@ -55,11 +56,12 @@ public class LoginPanel : MonoBehaviour {
 	public LoadingText loadingText;
 
 	[Header("Info bubble")]
-	public RectTransform loginInfoBubble;
-	public RectTransform gamerceBubble;
-	public RectTransform rosemundeBubble;
-	public RectTransform registerInfoBubble;
-	public RectTransform newsletterInfoBubble;
+	public GameObject loginInfoBubble;
+	public GameObject gamerceBubble;
+	public GameObject cykelkraftBubble;
+	public GameObject registerInfoBubble;
+	public GameObject newsletterInfoBubble;
+	public TextPic PrivacyPolicyText;
 
 	private void OnEnable()
 	{
@@ -170,6 +172,8 @@ public class LoginPanel : MonoBehaviour {
 		//MenuManager.Instance.OpenLoadingWindow("Loading");
 		GamerceInit.instance.PressedLogout(() => 
 		{
+			GameAnalyticsManager.instance.LoggedOutSuccess();
+
 			OpenLoginPanel();
 			CloseLoading();
 			//MenuManager.Instance.CloseLoadingWindow();
@@ -179,16 +183,14 @@ public class LoginPanel : MonoBehaviour {
 
 	void UpdateStars()
 	{
-		float timePlayed = 0;
-		if (PlayerPrefs.HasKey("PlayedForTime"))
-			timePlayed = PlayerPrefs.GetFloat("PlayedForTime");
+		float points = GamerceInit.instance.playerData.GetPoints();
 
 		//pointsText.GetComponent<Text>().text = "Your Points: " + (int)timePlayed + "/" + GamerceInit.instance.MaxGamercePoints.ToString();
-		if (timePlayed >= GamerceInit.instance.ThreeStarPoints)
+		if (points >= GamerceInit.instance.ThreeStarPoints)
 			starHandler.SetActiveStars(3);
-		else if (timePlayed >= GamerceInit.instance.TwoStarPoints)
+		else if (points >= GamerceInit.instance.TwoStarPoints)
 			starHandler.SetActiveStars(2);
-		else if (timePlayed >= GamerceInit.instance.OneStarPoints)
+		else if (points >= GamerceInit.instance.OneStarPoints)
 			starHandler.SetActiveStars(1);
 		else
 			starHandler.SetActiveStars(0);
@@ -457,49 +459,44 @@ public class LoginPanel : MonoBehaviour {
 
 	public void ClickedGamerceInfo()
 	{
-		gamerceBubble.gameObject.SetActive(true);
-		gamerceBubble.parent.gameObject.SetActive(true);
-
+		gamerceBubble.SetActive(true);
 	}
 
 	public void ClickedRosemundeInfo()
 	{
-		rosemundeBubble.gameObject.SetActive(true);
-		rosemundeBubble.parent.gameObject.SetActive(true);
+		cykelkraftBubble.SetActive(true);
 	}
 
 	public void ClickedLoginInfoButton()
 	{
-		loginInfoBubble.gameObject.SetActive(true);
-		loginInfoBubble.parent.gameObject.SetActive(true);
+		loginInfoBubble.SetActive(true);
 	}
 
 	public void ClickedRegisterInfoButton()
 	{
-		registerInfoBubble.gameObject.SetActive(true);
-		registerInfoBubble.parent.gameObject.SetActive(true);
+		registerInfoBubble.SetActive(true);
 	}
 
 	public void ClickedNewsletterInfoButton()
 	{
-		newsletterInfoBubble.gameObject.SetActive(true);
-		newsletterInfoBubble.parent.gameObject.SetActive(true);
+		newsletterInfoBubble.SetActive(true);
+		PrivacyPolicyText.onHrefClick.AddListener(GoToGamercePrivacyPolicy);
 	}
 
 	public void DisableInfoBubble()
 	{
-		loginInfoBubble.gameObject.SetActive(false);
-		loginInfoBubble.parent.gameObject.SetActive(false);
+		if (newsletterInfoBubble.activeSelf == true)
+		{
+			PrivacyPolicyText.onHrefClick.RemoveAllListeners();
+		}
+		loginInfoBubble.SetActive(false);
 
-		registerInfoBubble.gameObject.SetActive(false);
-		registerInfoBubble.parent.gameObject.SetActive(false);
+		registerInfoBubble.SetActive(false);
 
-		newsletterInfoBubble.gameObject.SetActive(false);
-		newsletterInfoBubble.parent.gameObject.SetActive(false);
+		newsletterInfoBubble.SetActive(false);
 
-		rosemundeBubble.gameObject.SetActive(false);
-		gamerceBubble.gameObject.SetActive(false);
-		gamerceBubble.parent.gameObject.SetActive(false);
+		cykelkraftBubble.SetActive(false);
+		gamerceBubble.SetActive(false);
 	}
 
 	public void ShowLoading(string aText)
@@ -562,5 +559,36 @@ public class LoginPanel : MonoBehaviour {
 	private void OpenMailSentWindow()
 	{
 		//throw new NotImplementedException();
+	}
+
+	public void GoToGamerce()
+	{
+		string url = GamerceInit.instance.GamerceLink;
+		OpenURL(url);
+	}
+
+	public void GoToGamerceTermsAndCondition()
+	{
+		string url = GamerceInit.instance.TermsAndConditionLink;
+		OpenURL(url);
+	}
+
+	public void GoToGamercePrivacyPolicy(string aLink)
+	{
+		string url = GamerceInit.instance.PrivacyPolicyLink;
+		OpenURL(url);
+	}
+
+	void OpenURL(string url)
+	{
+#if UNITY_IOS
+		InAppBrowser.DisplayOptions displayOptions = new InAppBrowser.DisplayOptions();
+		displayOptions.displayURLAsPageTitle = false;
+		displayOptions.backButtonText = "Back";
+		displayOptions.pageTitle = "Gamerce";
+		InAppBrowser.OpenURL(url, displayOptions);
+#elif UNITY_ANDROID
+		Application.OpenURL(url);
+#endif
 	}
 }

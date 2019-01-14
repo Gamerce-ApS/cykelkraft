@@ -704,7 +704,7 @@ public class GuiManager : MonoBehaviour {
 				string rewardText = "You have unlocked a special reward!";
 				if (GamerceInit.instance.IsLoggedIn() == false)
 				{
-					rewardText += " Login to claim it!";
+					rewardText += "\n\nLogin to claim it!";
 				}
 				gameOverMenu.discountWindow.SetActive(true);
 				MoveUI(gameOverMenu.discountWindow.GetComponent<RectTransform>(), new Vector2(0, 0), 0.5f, 0, Ease.OutFlash);
@@ -720,7 +720,7 @@ public class GuiManager : MonoBehaviour {
 		bool haveInternet = GamerceInit.instance.CheckInternetAvailability();
 
 		int discountWindowShowed = PlayerPrefs.GetInt("DiscountWindowShowed", 0);
-		float points = PlayerPrefs.GetFloat("PlayedForTime");
+		float points = GamerceInit.instance.playerData.GetPoints();
 		if (discountWindowShowed == 2 && points >= GamerceInit.instance.ThreeStarPoints && haveInternet == true)
 		{
 			GamerceInit.instance.shouldShowDiscountWindow = true;
