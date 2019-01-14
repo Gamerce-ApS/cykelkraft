@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CykelKraft", "CykelKraft.csproj", "{851625AE-0E41-920A-45F7-4EAB692E0FDE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cykelkraft", "Cykelkraft.csproj", "{EEB16CE7-928C-AB45-AF46-6963712C55E9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CykelKraft.Editor", "CykelKraft.Editor.csproj", "{1030411E-6392-BB38-EF87-6C1D328BE8D9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cykelkraft.Editor", "Cykelkraft.Editor.csproj", "{B27BAD33-024B-004A-8EF4-9A8293B9E0D6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,14 +11,14 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{851625AE-0E41-920A-45F7-4EAB692E0FDE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{851625AE-0E41-920A-45F7-4EAB692E0FDE}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{851625AE-0E41-920A-45F7-4EAB692E0FDE}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{851625AE-0E41-920A-45F7-4EAB692E0FDE}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1030411E-6392-BB38-EF87-6C1D328BE8D9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1030411E-6392-BB38-EF87-6C1D328BE8D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1030411E-6392-BB38-EF87-6C1D328BE8D9}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1030411E-6392-BB38-EF87-6C1D328BE8D9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EEB16CE7-928C-AB45-AF46-6963712C55E9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EEB16CE7-928C-AB45-AF46-6963712C55E9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EEB16CE7-928C-AB45-AF46-6963712C55E9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EEB16CE7-928C-AB45-AF46-6963712C55E9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B27BAD33-024B-004A-8EF4-9A8293B9E0D6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B27BAD33-024B-004A-8EF4-9A8293B9E0D6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B27BAD33-024B-004A-8EF4-9A8293B9E0D6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B27BAD33-024B-004A-8EF4-9A8293B9E0D6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

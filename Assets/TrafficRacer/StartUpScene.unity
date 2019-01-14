@@ -487,14 +487,16 @@ MonoBehaviour:
   shouldShowLoginWindow: 0
   discountPercents: []
   playerData:
+    email: 
     games:
-      CykelKraft:
+      Cykelkraft:
         points: 0
   SceneToLoad: 
   hasWon: 0
   playfabId: 
   countryCode: 
   playfabTicker: {fileID: 1571169055}
+  ShouldShowGamerce: 0
 --- !u!4 &1571169054
 Transform:
   m_ObjectHideFlags: 0

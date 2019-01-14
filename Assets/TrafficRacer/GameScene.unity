@@ -4036,7 +4036,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -0.7, y: 108.69}
+  m_AnchoredPosition: {x: -0.70000005, y: 108.69}
   m_SizeDelta: {x: 597.5, y: 647.2}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &240892352
@@ -6917,7 +6917,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -0.70002, y: -580.6}
+  m_AnchoredPosition: {x: -0.7000201, y: -580.6}
   m_SizeDelta: {x: 405.2, y: 124.2}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &509351070
@@ -12602,7 +12602,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 0, y: 0.5}
-  m_AnchoredPosition: {x: 12.6, y: 0.00000095367}
+  m_AnchoredPosition: {x: 12.600006, y: 0.00000095367}
   m_SizeDelta: {x: 133, y: 133}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!114 &703331989
@@ -14598,7 +14598,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -159.5, y: 12.8}
+  m_AnchoredPosition: {x: -159.5, y: 12.799999}
   m_SizeDelta: {x: 120, y: 120}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &834077788
@@ -18831,7 +18831,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -252.7, y: 21.9}
+  m_AnchoredPosition: {x: -252.70001, y: 21.900002}
   m_SizeDelta: {x: 173.8, y: 173.8}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1189223002
@@ -19340,7 +19340,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -1.0975, y: -870}
+  m_AnchoredPosition: {x: -1.0974998, y: -870}
   m_SizeDelta: {x: 368.1, y: 112.9}
   m_Pivot: {x: 0.5, y: 0.5000001}
 --- !u!114 &1239228254
@@ -20455,7 +20455,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: -31.87}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 148.1, y: 12.8}
+  m_AnchoredPosition: {x: 148.1, y: 12.799999}
   m_SizeDelta: {x: 120, y: 120}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1331132135
@@ -21813,7 +21813,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -58.267, y: -117.2}
+  m_AnchoredPosition: {x: -58.267, y: -117.200005}
   m_SizeDelta: {x: 738.5, y: 107.7}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1428639770
@@ -27024,7 +27024,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -159.5, y: 12.8}
+  m_AnchoredPosition: {x: -159.5, y: 12.799999}
   m_SizeDelta: {x: 120, y: 120}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1562716778
@@ -28727,7 +28727,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0.5}
   m_AnchorMax: {x: 1, y: 0.5}
-  m_AnchoredPosition: {x: -0, y: -2.3}
+  m_AnchoredPosition: {x: 0, y: -2.3000002}
   m_SizeDelta: {x: 468.7, y: 208.4}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!114 &1679826748
@@ -29574,7 +29574,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -0.70101, y: -173.9}
+  m_AnchoredPosition: {x: -0.70101, y: -173.89998}
   m_SizeDelta: {x: 630.1, y: 199.6}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1702248103
@@ -33744,89 +33744,59 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   carsToPool:
-  - name: CarABrownEnemy
+  - name: Biker_1
     poolAmount: 2
     poolObject: {fileID: 1226934513614622, guid: a023fb55fb6251f479a501673a385ee1,
       type: 2}
     shouldExpland: 1
-  - name: CarAGreenEnemy
+  - name: Biker_2
     poolAmount: 2
     poolObject: {fileID: 1506733951288600, guid: c29ec380580851246bfccb15664a3fa0,
       type: 2}
     shouldExpland: 1
-  - name: CarAOrangeEnemy
+  - name: Biker_3
     poolAmount: 2
     poolObject: {fileID: 1873033792133602, guid: 15f72100812b39648a9f8931fe142a22,
       type: 2}
     shouldExpland: 1
-  - name: CarARedEnemy
+  - name: Biker_4
     poolAmount: 2
     poolObject: {fileID: 1057428751728936, guid: d00af881677b184478b0f5825034a180,
       type: 2}
     shouldExpland: 1
-  - name: CarBBrownEnemy
+  - name: Biker_5
     poolAmount: 2
     poolObject: {fileID: 1128530778378668, guid: aa823378cb44cc34dbdff046147ac46d,
       type: 2}
     shouldExpland: 1
-  - name: CarBGreenEnemy
+  - name: Biker_6
     poolAmount: 2
     poolObject: {fileID: 1654557381437240, guid: e0ef01b402ae25a4399d78faa80bb3f4,
       type: 2}
     shouldExpland: 1
-  - name: CarBOrangeEnemy
+  - name: Biker_7
     poolAmount: 2
     poolObject: {fileID: 1894548389227480, guid: 46e037e58c650b049a3a9730d8aab48e,
       type: 2}
     shouldExpland: 1
-  - name: CarBRedEnemy
+  - name: Biker_10
     poolAmount: 2
     poolObject: {fileID: 1695268284919134, guid: 878d69c9ad975ed4992133f5f610467c,
       type: 2}
     shouldExpland: 1
-  - name: CarCBrownEnemy
+  - name: Biker_8
     poolAmount: 2
     poolObject: {fileID: 1394860980207936, guid: 0ac3ace9702ba434f883a2c804c42d63,
       type: 2}
     shouldExpland: 1
-  - name: CarCGreenEnemy
+  - name: Biker_9
     poolAmount: 2
     poolObject: {fileID: 1682831424991422, guid: 07c69c8373959b641a97b6da9938ae15,
       type: 2}
     shouldExpland: 1
-  - name: CarCOrangeEnemy
+  - name: Biker_11
     poolAmount: 2
     poolObject: {fileID: 1686993834652438, guid: 9bd235ed37baaff4dacf1e5cf824a16d,
-      type: 2}
-    shouldExpland: 1
-  - name: CarCRedEnemy
-    poolAmount: 2
-    poolObject: {fileID: 1967633064500206, guid: 0fbfc979866c6c74892e59f81c5648b4,
-      type: 2}
-    shouldExpland: 1
-  - name: CarPoliceEnemy
-    poolAmount: 2
-    poolObject: {fileID: 1872175513647076, guid: 3e16fab9eea58554687b399a10ce6dad,
-      type: 2}
-    shouldExpland: 1
-  - name: TruckSmallBrownEnemy
-    poolAmount: 2
-    poolObject: {fileID: 1318161385313408, guid: 5bdf0f59835d410408299e012b4a5d08,
-      type: 2}
-    shouldExpland: 1
-  - name: TruckSmallOrangeEnemy
-    poolAmount: 2
-    poolObject: {fileID: 1263734321583180, guid: 33b48aaf78292f44092afec6ceefa304,
-      type: 2}
-    shouldExpland: 1
-  - name: TruckBigOrangeEnemy
-    poolAmount: 2
-    poolObject: {fileID: 1181015647158780, guid: f9685729fa9fded4e81dfc0e27aafc98,
-      type: 2}
-    shouldExpland: 1
-  - name: TruckBigRedEnemy
-    poolAmount: 2
-    poolObject: {fileID: 1589117825378570, guid: 06e1d62cf5075db479ec07994aadbcb4,
       type: 2}
     shouldExpland: 1
   gameFXToPool:
@@ -33846,11 +33816,6 @@ MonoBehaviour:
       type: 2}
     shouldExpland: 1
   pickUpObjectsToPool:
-  - name: CarFuel
-    poolAmount: 2
-    poolObject: {fileID: 1828836059875004, guid: bfe2c228f9aed6540bc95002549f9541,
-      type: 2}
-    shouldExpland: 1
   - name: Coin1
     poolAmount: 2
     poolObject: {fileID: 1065457633984440, guid: ed7de7288b4630249b726c15d08ba146,
@@ -34358,7 +34323,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0.5}
   m_AnchorMax: {x: 1, y: 0.5}
-  m_AnchoredPosition: {x: -34.4, y: 0}
+  m_AnchoredPosition: {x: -34.399994, y: 0}
   m_SizeDelta: {x: 78, y: 78}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2017100467
@@ -35969,7 +35934,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: -0.88400006}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 148.1, y: 12.8}
+  m_AnchoredPosition: {x: 148.1, y: 12.799999}
   m_SizeDelta: {x: 120, y: 120}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2120649545

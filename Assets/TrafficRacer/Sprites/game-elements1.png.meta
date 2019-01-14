@@ -7,7 +7,7 @@ TextureImporter:
     21300000: biker_1
     21300002: biker_4
     21300004: biker_7
-    21300006: biker_8
+    21300006: biker_10
     21300008: game-elements1_4
     21300010: game-elements1_5
     21300012: game-elements1_6
@@ -20,6 +20,10 @@ TextureImporter:
     21300026: coin10
     21300028: coin1
     21300030: coin5
+    21300032: game-elements1_0
+    21300034: biker_8
+    21300036: biker_11
+    21300038: biker_9
   externalObjects: {}
   serializedVersion: 4
   mipmaps:
@@ -145,7 +149,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 122
-        y: 459
+        y: 458
         width: 99
         height: 224
       alignment: 0
@@ -158,8 +162,8 @@ TextureImporter:
       name: biker_7
       rect:
         serializedVersion: 2
-        x: 241
-        y: 459
+        x: 243
+        y: 458
         width: 99
         height: 224
       alignment: 0
@@ -169,11 +173,11 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: biker_8
+      name: biker_10
       rect:
         serializedVersion: 2
-        x: 358
-        y: 459
+        x: 364
+        y: 458
         width: 99
         height: 224
       alignment: 0
@@ -346,6 +350,62 @@ TextureImporter:
         height: 80
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: game-elements1_0
+      rect:
+        serializedVersion: 2
+        x: 363
+        y: 449
+        width: 99
+        height: 224
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: biker_8
+      rect:
+        serializedVersion: 2
+        x: 243
+        y: 232
+        width: 99
+        height: 224
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: biker_11
+      rect:
+        serializedVersion: 2
+        x: 364
+        y: 232
+        width: 99
+        height: 224
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: biker_9
+      rect:
+        serializedVersion: 2
+        x: 243
+        y: 8
+        width: 99
+        height: 224
+      alignment: 0
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
