@@ -17,7 +17,7 @@ public class LoadingScene : MonoBehaviour
 
 	IEnumerator Loading()
 	{
-		yield return new WaitUntil(() => { return GamerceInit.instance.internalDataRecieved == true; });
+		yield return new WaitUntil(() => { return GamerceInit.instance.internalDataRecieved == true && GamerceInit.instance.isLoggingIn == false; });
 
 		SceneManager.LoadScene(1);
 	}

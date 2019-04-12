@@ -25,6 +25,7 @@ public class GamerceInit : MonoBehaviour
 	public static GamerceInit instance;
 
 	public bool internalDataRecieved;
+	public bool isLoggingIn;
 
 	public int MaxGamercePoints;
 	public float OneStarPoints;
@@ -44,6 +45,7 @@ public class GamerceInit : MonoBehaviour
 	public List<string> discountPercents;
 
 	float startingPoints;
+	public int gameOverCounter = 0;
 
 	public PlayerData playerData;
 
@@ -285,11 +287,12 @@ public class GamerceInit : MonoBehaviour
 		if (string.IsNullOrEmpty(username) == false && string.IsNullOrEmpty(password) == false)
 		{
 			PressedLogin(username, password, null);
-
+			isLoggingIn = true;
 		}
 		else
 		{
 			PressedLogout(null);
+			isLoggingIn = false;
 			//shouldShowLoginWindow = true;
 		}
 		GetPlayerData();
@@ -430,6 +433,11 @@ public class GamerceInit : MonoBehaviour
 							if (onLogedIn != null)
 								onLogedIn(true);
 						}
+						else
+						{
+							if (onLogedIn != null)
+								onLogedIn(false);
+						}
 					}, username, pw, aShouldSendPlayfabId));
 
 
@@ -476,7 +484,8 @@ public class GamerceInit : MonoBehaviour
 			Debug.Log(www.downloadHandler.text);
 			if (www.downloadHandler.text == "error")
 			{
-
+				if (onComplete != null)
+					onComplete(false);
 			}
 			else
 			{
@@ -513,7 +522,7 @@ public class GamerceInit : MonoBehaviour
 					request.GeneratePlayStreamEvent = true;
 
 					PlayFabClientAPI.ExecuteCloudScript(request, result => {
-
+						isLoggingIn = false;
 						if (onComplete != null)
 							onComplete(true);
 
@@ -705,7 +714,7 @@ public class GamerceInit : MonoBehaviour
 			PlayerPrefs.DeleteKey("G_Password");
 			PlayerPrefs.DeleteKey("G_Email");
 			PlayerPrefs.DeleteKey("HaveAcceptedGamerceNL");
-			PlayerPrefs.DeleteKey("HaveAcceptedBubbleroomNL");
+			PlayerPrefs.DeleteKey("HaveAcceptedCKNL");
 			PlayerPrefs.DeleteKey("DiscountWindowShowed");
 			PlayerPrefs.DeleteKey("PlayedForTime");
 			PlayerPrefs.DeleteKey("TimesShowedNewsLetter");

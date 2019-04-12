@@ -17,6 +17,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using DG.Tweening;
+using System;
 
 public class GuiManager : MonoBehaviour {
 
@@ -54,7 +55,7 @@ public class GuiManager : MonoBehaviour {
 
     [SerializeField] [Header("-----------------------")] private GameObject mainMenuObj;        //ref to mainMenu panel
                                                                                                 //ref to other Object
-    [SerializeField] private GameObject gameMenuObj, gameoverMenu, reviveMenu, carShopPanel, turboEffect, powerupShop, gdprAdmobPanel, gamercePanel, pauseMenu;
+    [SerializeField] private GameObject gameMenuObj, gameoverMenu, reviveMenu, carShopPanel, turboEffect, powerupShop, gdprAdmobPanel, gamercePanel, pauseMenu, rateUsPanel;
     [SerializeField] private ScrollTexture road;                                                //ref to ScrollTexture component on road gameobject
     [SerializeField] private float currentSpeed;                                                //speed of game
     [SerializeField] private Button noAdsbtn;                                                   //ref to remove ads button
@@ -100,6 +101,7 @@ public class GuiManager : MonoBehaviour {
 
     [HideInInspector]
     public managerVars vars;
+
 
     void Awake ()
     {
@@ -491,7 +493,7 @@ public class GuiManager : MonoBehaviour {
             coinUIObj = ObjectPooling.instance.GetPickUpFXPooledObject("CoinUIFX");                     //get coinUI fx
             coinUIObj.transform.position = gameOverMenu.collectBtn.transform.position;                  //set its transform
             coinUIObj.SetActive(true);                                                                  //activate it
-            float r = Random.Range(0.25f, 0.8f);                                                        //get random number
+            float r = UnityEngine.Random.Range(0.25f, 0.8f);                                                        //get random number
             coinUIObj.transform.DOMove(gameOverMenu.coinImg.transform.position, r).OnComplete(DeactivateUICoin).SetEase(Ease.Linear); //move the coin 
         }
 		else if(value == "gamerce")
@@ -528,6 +530,20 @@ public class GuiManager : MonoBehaviour {
 		else if (value == "quitgame")
 		{
 			SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+			GameManager.Instance.paused = false;
+		}
+		else if(value == "closeGamerceOnly")
+		{
+			MoveUI(gamercePanel.GetComponent<RectTransform>(), new Vector2(0, -2500), 0.5f, 0f, Ease.OutFlash, false);     //slide out gamerce
+		}
+		else if(value == "rateUs")
+		{
+			rateUsPanel.SetActive(true);
+			MoveUI(rateUsPanel.GetComponent<RectTransform>(), new Vector2(0, 0), 0.5f, 0f, Ease.OutFlash);
+		}
+		else if(value == "closeRateUs")
+		{
+			MoveUI(rateUsPanel.GetComponent<RectTransform>(), new Vector2(0, -2500), 0.5f, 0f, Ease.OutFlash, false);
 		}
 	}
 
@@ -708,12 +724,36 @@ public class GuiManager : MonoBehaviour {
 				}
 				gameOverMenu.discountWindow.SetActive(true);
 				MoveUI(gameOverMenu.discountWindow.GetComponent<RectTransform>(), new Vector2(0, 0), 0.5f, 0, Ease.OutFlash);
+				GamerceInit.instance.shouldShowDiscountWindow = false;
+			}
+			else if(ShouldShowNewsLetterSignup())
+			{
+				gamercePanel.SetActive(true);
+				MoveUI(gamercePanel.GetComponent<RectTransform>(), new Vector2(0, 0), 0.5f, 0f, Ease.OutFlash);
+				//MoveUI(gameoverMenu.GetComponent<RectTransform>(), new Vector2(0, 2500), 0.5f, 0f, Ease.OutFlash);     //slide in gameoverMenu
+				gamercePanel.GetComponent<LoginPanel>().OpenNewsLetter();
 			}
 		});  //slide in gameoverMenu
 
 		SoundManager.instance.PlayFX("PanelSlide");                                                     //play slide in sound
     }
 
+	private bool ShouldShowNewsLetterSignup()
+	{
+		int haveAcceptedGamerceNL = PlayerPrefs.GetInt("HaveAcceptedGamerceNL", 0);
+		int haveAcceptedCKNL = PlayerPrefs.GetInt("HaveAcceptedCKNL", 0);
+
+		if(GamerceInit.instance.gameOverCounter % 3 == 0 && GamerceInit.instance.IsLoggedIn() == true)
+		{
+			if(haveAcceptedCKNL == 0 || haveAcceptedGamerceNL == 0)
+			{
+				return true;
+			}
+		}
+
+		return false;
+	}
+	
 	void ShouldShowDiscountWindow()
 	{
 		//bool isLoggedInToPlayfab = GamerceInit.instance.IsLogedInToPlayfab;
@@ -755,7 +795,7 @@ public class GuiManager : MonoBehaviour {
 
 		//    GameManager.instance.gamesPlayed++;
 		//}
-
+		GamerceInit.instance.gameOverCounter++;
 		gameOverMenu.coinText.text = "" + GameManager.Instance.coinAmount;                              //set gameOverMenu coinText
         gameOverMenu.coinEarnedText.text = "+" + GameManager.Instance.currentCoinsEarned;               //set coinEarnedText
         gameOverMenu.scoreText.text = "" + Mathf.CeilToInt(GameManager.Instance.currentDistance);       //set scoreText
@@ -787,19 +827,17 @@ public class GuiManager : MonoBehaviour {
 		bool isLoggedIn = GamerceInit.instance.IsLoggedIn();
 		if (isLoggedIn == true)
 		{
-#if UNITY_ANDROID
 			string latestDiscount = GamerceInit.instance.GetLatestDiscountPercent();
 			string url = "http://gamerce.net/gameunlocks/cykelkraft/unlocked_discount.php?pro=" + latestDiscount;
+
+#if UNITY_ANDROID
+
 			Application.OpenURL(url);
-			MoveUI(gameOverMenu.discountWindow.GetComponent<RectTransform>(), new Vector2(0, 2500), 0.5f, 0f, Ease.OutFlash);
-			MoveUI(gameoverMenu.GetComponent<RectTransform>(), new Vector2(0, 2500), 0.5f, 0f, Ease.OutFlash);
-			MoveUI(gamercePanel.GetComponent<RectTransform>(), new Vector2(0, 0), 0.5f, 0f, Ease.OutFlash);
+
 #elif UNITY_IOS
 			if (InAppBrowser.IsInAppBrowserOpened() == false)
 			{
 				//GameAnalyticsManager.instance.ClickedClaimLoggedIn(latestDiscount);
-				string latestDiscount = GamerceInit.instance.GetLatestDiscountPercent();
-				string url = "http://gamerce.net/gameunlocks/cykelkraft/unlocked_discount.php?pro=" + latestDiscount;
 				InAppBrowser.DisplayOptions displayOptions = new InAppBrowser.DisplayOptions();
 				displayOptions.displayURLAsPageTitle = false;
 				displayOptions.backButtonText = "Back";
@@ -813,16 +851,21 @@ public class GuiManager : MonoBehaviour {
 		}
 		else
 		{
-			GamerceInit.instance.ShouldShowGamerce = true;
-			SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-			MenuBtns("gamerce");
+			//GamerceInit.instance.ShouldShowGamerce = true;
+			//SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+			//MenuBtns("gamerce");
 			//MoveUI(gameOverMenu.discountWindow.GetComponent<RectTransform>(), new Vector2(0, 2500), 0.5f, 0f, Ease.OutFlash);
 			//MoveUI(gameoverMenu.GetComponent<RectTransform>(), new Vector2(0, 2500), 0.5f, 0f, Ease.OutFlash);
 			//MoveUI(gamercePanel.GetComponent<RectTransform>(), new Vector2(0, 0), 0.5f, 0f, Ease.OutFlash);
 			//GameAnalyticsManager.instance.ClickedClaimLoggedOut(latestDiscount);
 			//MenuManager.Instance.OpenLogin();
 		}
-
+		GamerceInit.instance.ShouldShowGamerce = true;
+		SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+		MenuBtns("gamerce");
+		//MoveUI(gameOverMenu.discountWindow.GetComponent<RectTransform>(), new Vector2(0, 2500), 0.5f, 0f, Ease.OutFlash);
+		//MoveUI(gameoverMenu.GetComponent<RectTransform>(), new Vector2(0, 2500), 0.5f, 0f, Ease.OutFlash);
+		//MoveUI(gamercePanel.GetComponent<RectTransform>(), new Vector2(0, 0), 0.5f, 0f, Ease.OutFlash);
 		//MoveUI(gameOverMenu.discountWindow.GetComponent<RectTransform>(), new Vector2(0, 2500), 0.5f, 0f, Ease.OutFlash);
 	}
 

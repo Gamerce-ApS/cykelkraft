@@ -15,6 +15,9 @@ public class LoginPanel : MonoBehaviour {
 	public GameObject register;
 	public GameObject newsLetter;
 	public GameObject newsLetterAcceptedPopup;
+	public GameObject emailSent;
+	public GameObject errorPanel;
+	public Text errorMessage;
 
 	public Material greyScaleMaterial;
 
@@ -66,6 +69,11 @@ public class LoginPanel : MonoBehaviour {
 	private void OnEnable()
 	{
 		OpenGamercePanel();
+	}
+
+	private void OnDisable()
+	{
+		isRegistering = false;
 	}
 
 	public void OpenGamercePanel()
@@ -131,6 +139,10 @@ public class LoginPanel : MonoBehaviour {
 			//MenuManager.Instance.CloseLoadingWindow();
 			GameAnalyticsManager.instance.LogginSuccessful();
 			CloseLoading();
+			if (PlayerPrefs.GetInt("HaveSeenRateUs", 0) == 0)
+			{
+				StartCoroutine(ShowRateUs());
+			}
 		}
 		else
 		{
@@ -139,6 +151,16 @@ public class LoginPanel : MonoBehaviour {
 			CloseLoading();
 			GameAnalyticsManager.instance.LogginFailed();
 		}
+	}
+
+	IEnumerator ShowRateUs()
+	{
+		yield return new WaitForSeconds(1f);
+#if UNITY_ANDROID
+		GuiManager.Instance.MenuBtns("rateUs");
+#elif UNITY_IOS
+			UnityEngine.iOS.Device.RequestStoreReview();
+#endif
 	}
 
 	public void GoToRegisterPanel()
@@ -282,19 +304,21 @@ public class LoginPanel : MonoBehaviour {
 
 	public void UsePoints()
 	{
-		if (InAppBrowser.IsInAppBrowserOpened() == false)
-		{
-			GameAnalyticsManager.instance.ClickedUsePoints();
-			InAppBrowser.DisplayOptions displayOptions = new InAppBrowser.DisplayOptions
-			{
-				displayURLAsPageTitle = false,
-				backButtonText = "Back",
-				pageTitle = "Gamerce Platform"
-			};
-			string url = "https://gamerce.net/gamerce_gotoprofile/?username=" + PlayerPrefs.GetString("G_Username") + "&password=" + PlayerPrefs.GetString("G_Password");
-			Application.OpenURL(url);
+		GameAnalyticsManager.instance.ClickedUsePoints();
+		string url = "https://gamerce.net/gamerce_gotoprofile/?username=" + PlayerPrefs.GetString("G_Username") + "&password=" + PlayerPrefs.GetString("G_Password");
+		OpenURL(url);
+		//if (InAppBrowser.IsInAppBrowserOpened() == false)
+		//{
+		//	InAppBrowser.DisplayOptions displayOptions = new InAppBrowser.DisplayOptions
+		//	{
+		//		displayURLAsPageTitle = false,
+		//		backButtonText = "Back",
+		//		pageTitle = "Gamerce Platform"
+		//	};
+			
+		//	Application.OpenURL(url);
 
-		}
+		//}
 	}
 
 
@@ -343,9 +367,13 @@ public class LoginPanel : MonoBehaviour {
 	{
 		string whereIsShowing = "";
 		if (isRegistering == true)
+		{
+			GuiManager.Instance.MenuBtns("closeGamerce");
 			whereIsShowing = "Register";
+		}
 		else
 		{
+			GuiManager.Instance.MenuBtns("closeGamerceOnly");
 			whereIsShowing = "Level"+PlayerPrefs.GetInt("OpenLevel", 0).ToString();
 		}
 		GameAnalyticsManager.instance.ClosesNewsletterPopup(whereIsShowing);
@@ -424,11 +452,13 @@ public class LoginPanel : MonoBehaviour {
 			return;
 		string url = "http://gamerce.net/gameunlocks/rosemunde/unlocked_discount.php?pro="+ latestDiscountAmount;
 
-		InAppBrowser.DisplayOptions displayOptions = new InAppBrowser.DisplayOptions();
-		displayOptions.displayURLAsPageTitle = false;
-		displayOptions.backButtonText = "Back";
-		displayOptions.pageTitle = "Gamerce";
-		InAppBrowser.OpenURL(url, displayOptions);
+		OpenURL(url);
+
+		//InAppBrowser.DisplayOptions displayOptions = new InAppBrowser.DisplayOptions();
+		//displayOptions.displayURLAsPageTitle = false;
+		//displayOptions.backButtonText = "Back";
+		//displayOptions.pageTitle = "Gamerce";
+		//InAppBrowser.OpenURL(url, displayOptions);
 	}
 
 	public void GoToRosemunde()
@@ -454,7 +484,7 @@ public class LoginPanel : MonoBehaviour {
 		string onlyCode = GamerceInit.instance.GetLatestDiscountCode();
 		string url = "https://gamerce.net/gameunlocks/cykelkraft/unlock_overview.php?pro="+latestDiscountAmount+"&code="+onlyCode;
 
-		Application.OpenURL(url);
+		OpenURL(url);
 	}
 
 	public void ClickedGamerceInfo()
@@ -528,7 +558,8 @@ public class LoginPanel : MonoBehaviour {
 		if (www.isNetworkError || www.isHttpError)
 		{
 			CloseLoading();
-			//MenuManager.Instance.ShowErrorMessage("An error has occurred. Try again");
+
+			ShowErrorMessage("An error has occurred. Try again");
 			Debug.Log(www.error);
 		}
 		else
@@ -538,7 +569,7 @@ public class LoginPanel : MonoBehaviour {
 			{
 				if (www.downloadHandler.text == "-21" || www.downloadHandler.text == "-20")
 				{
-					//MenuManager.Instance.ShowErrorMessage("You have to unlock at least one discount before we can send an email.");
+					ShowErrorMessage("You have to unlock at least one discount before we can send an email.");
 				}
 				else if (www.downloadHandler.text == "1")
 				{
@@ -546,19 +577,19 @@ public class LoginPanel : MonoBehaviour {
 				}
 				else
 				{
-					//MenuManager.Instance.ShowErrorMessage("An error has occurred. Try again");
+					ShowErrorMessage("An error has occurred. Try again");
 				}
 			}
 			else
 			{
-				//MenuManager.Instance.ShowErrorMessage("An error has occurred. Try again");
+				ShowErrorMessage("An error has occurred. Try again");
 			}
 		}
 	}
 
 	private void OpenMailSentWindow()
 	{
-		//throw new NotImplementedException();
+		emailSent.SetActive(true);
 	}
 
 	public void GoToGamerce()
@@ -582,13 +613,22 @@ public class LoginPanel : MonoBehaviour {
 	void OpenURL(string url)
 	{
 #if UNITY_IOS
-		InAppBrowser.DisplayOptions displayOptions = new InAppBrowser.DisplayOptions();
-		displayOptions.displayURLAsPageTitle = false;
-		displayOptions.backButtonText = "Back";
-		displayOptions.pageTitle = "Gamerce";
-		InAppBrowser.OpenURL(url, displayOptions);
+		if (InAppBrowser.IsInAppBrowserOpened() == false)
+		{
+			InAppBrowser.DisplayOptions displayOptions = new InAppBrowser.DisplayOptions();
+			displayOptions.displayURLAsPageTitle = false;
+			displayOptions.backButtonText = "Back";
+			displayOptions.pageTitle = "Gamerce";
+			InAppBrowser.OpenURL(url, displayOptions);
+		}
 #elif UNITY_ANDROID
 		Application.OpenURL(url);
 #endif
+	}
+
+	public void ShowErrorMessage(string aErrorMessage)
+	{
+		errorMessage.text = aErrorMessage;
+		errorPanel.SetActive(true);
 	}
 }

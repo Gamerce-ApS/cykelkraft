@@ -46,6 +46,7 @@ public class PlayFabTicker : MonoBehaviour {
 	public void StartTicker()
 	{
 		Running = true;
+		TimePlayed = 0f;
 	}
 	public void EndTicker(System.Action<bool> onComplete = null)
 	{

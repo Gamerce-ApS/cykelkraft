@@ -1,9 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.28010.2050
-MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CykelKraft", "CykelKraft.csproj", "{EEB16CE7-928C-AB45-AF46-6963712C55E9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CykelKraft", "CykelKraft.csproj", "{851625AE-0E41-920A-45F7-4EAB692E0FDE}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CykelKraft.Editor", "CykelKraft.Editor.csproj", "{1030411E-6392-BB38-EF87-6C1D328BE8D9}"
 EndProject
@@ -13,10 +11,10 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{EEB16CE7-928C-AB45-AF46-6963712C55E9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{EEB16CE7-928C-AB45-AF46-6963712C55E9}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{EEB16CE7-928C-AB45-AF46-6963712C55E9}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{EEB16CE7-928C-AB45-AF46-6963712C55E9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{851625AE-0E41-920A-45F7-4EAB692E0FDE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{851625AE-0E41-920A-45F7-4EAB692E0FDE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{851625AE-0E41-920A-45F7-4EAB692E0FDE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{851625AE-0E41-920A-45F7-4EAB692E0FDE}.Release|Any CPU.Build.0 = Release|Any CPU
 		{1030411E-6392-BB38-EF87-6C1D328BE8D9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{1030411E-6392-BB38-EF87-6C1D328BE8D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1030411E-6392-BB38-EF87-6C1D328BE8D9}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -24,8 +22,5 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {1F441850-996C-4476-BD66-64C38705730B}
 	EndGlobalSection
 EndGlobal

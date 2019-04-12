@@ -25,7 +25,12 @@ public class CustomMenuItem : MonoBehaviour {
 		Debug.Log("PlayerPrefs deleted");
 	}
 
-
+	[MenuItem("Custom/PlayerPrefs/DeleteRateUs")]
+	public static void DeletRateUs()
+	{
+		PlayerPrefs.DeleteKey("HaveSeenRateUs");
+		Debug.Log("Rate us deleted");
+	}
 
 }
 #endif
